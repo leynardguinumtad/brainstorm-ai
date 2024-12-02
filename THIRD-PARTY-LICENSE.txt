@@ -18,6 +18,11 @@ The d3.js library. (https://d3js.org/)
 - Copyright 2010-2020 Mike Bostock; Licensed under BSD 3-Clause license (text below).
 
 
+Modified javascript code from arifr1234 (https://github.com/arifr1234/wikipedia-graph/tree/master).
+
+- Copyright 2021 Ari Friedman; Licensed under **\_\_** (text below).
+
+
 ## MIT License:
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
