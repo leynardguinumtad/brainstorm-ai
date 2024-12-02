@@ -1,3 +1,18 @@
+
+let currentPage = null;
+
+function changePage(oldPage, newPage)
+{
+  if (oldPage != null)
+  {
+    oldPage.style("display", "none");
+  }
+  if (newPage != null)
+  {
+    newPage.style("display", "unset");
+  }
+}
+// ===========================================================================
 drag = (simulation) =>
 {
   function dragstarted(event)
@@ -78,10 +93,6 @@ function update()
         .distance(300)
     )
     .force("charge", d3.forceManyBody().strength(-1500))
-    //.force("center", d3.forceCenter(width / 2, height / 2))
-    /*.force('collision', d3.forceCollide().radius(function(d) {
-            return getWidth(d.id, 32, "Arial") / 2.;
-        }))*/
     .force("x", d3.forceX(width / 2))
     .force("y", d3.forceY(height / 2));
 
@@ -232,7 +243,7 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true)
           .style("height", "auto")
           .style("overflow", "visible")
           .style("background-color", "#fff")
-          .insert("h1", ":first-child")
+          .insert("h4", ":first-child")
           .style("font-size", "28.8px")
           .style("margin-top", "0px")
           .attr("class", "firstHeading")
