@@ -1,16 +1,20 @@
-drag = (simulation) => {
-  function dragstarted(event) {
+drag = (simulation) =>
+{
+  function dragstarted(event)
+  {
     if (!event.active) simulation.alphaTarget(0.3).restart();
     event.subject.fx = event.subject.x;
     event.subject.fy = event.subject.y;
   }
 
-  function dragged(event) {
+  function dragged(event)
+  {
     event.subject.fx = event.x;
     event.subject.fy = event.y;
   }
 
-  function dragended(event) {
+  function dragended(event)
+  {
     if (!event.active) simulation.alphaTarget(0);
     event.subject.fx = null;
     event.subject.fy = null;
@@ -37,7 +41,8 @@ const svg = d3
   .style("flex-grow", "1")
   .attr("viewBox", [0, 0, width, height]);
 svg.call(
-  d3.zoom().on("zoom", function ({ transform }) {
+  d3.zoom().on("zoom", function ({ transform })
+  {
     container.attr("transform", transform);
   })
 );
@@ -58,7 +63,8 @@ let node = container
   .style("dominant-baseline", "central")
   .classed("noselect", true)
   .selectAll("text");
-function update() {
+function update()
+{
   let links = Object.values(dataLinks);
   let nodes = Object.values(dataNodes);
 
@@ -85,12 +91,14 @@ function update() {
     .data(links)
     .join("path")
     //.attr("marker-end", "url(#triangle)")
-    .on("click", (e, d) => {
+    .on("click", (e, d) =>
+    {
       loadWikiPage(d.source.id, d.linkId);
       //console.log(d.linkId);
     });
 
-  link.each(function (d, i) {
+  link.each(function (d, i)
+  {
     d3.select(this)
       .selectAll("title")
       .data([links[i]])
@@ -104,12 +112,15 @@ function update() {
     .join("text")
     .text((d) => d.id)
     .call(drag(simulation))
-    .on("click", (e, d) => {
+    .on("click", (e, d) =>
+    {
       loadWikiPage(d.id);
     });
 
-  simulation.on("tick", () => {
-    link.attr("d", (d) => {
+  simulation.on("tick", () =>
+  {
+    link.attr("d", (d) =>
+    {
       const O = new Vec2(d.source.x, d.source.y);
       const T = new Vec2(d.target.x, d.target.y);
 
@@ -122,11 +133,6 @@ function update() {
 
       const center = O.lerp(T, 0.5).addV(centerShift);
 
-      /*return `
-                    M ${source.lerp(target, 0.15).addV(R.mulS(6)).toArray()}
-                    Q ${source.lerp(target, 0.5).addV(R.mulS(18)).toArray()}
-                    ${source.lerp(target, 0.85).addV(R.mulS(6)).toArray()}
-                `*/
 
       return `
                     M ${O.addV(UShift).addV(RShift).toArray()}
@@ -144,9 +150,11 @@ function update() {
   });
 }
 
-function addLink(source, target, linkId) {
+function addLink(source, target, linkId)
+{
   let key = `${source}[to]${target}`;
-  if (!(key in dataLinks)) {
+  if (!(key in dataLinks))
+  {
     dataLinks[key] = { source: source, target: target, linkId: linkId };
     //                 dataNodes[source] dataNodes[target]
 
@@ -156,16 +164,20 @@ function addLink(source, target, linkId) {
   return false;
 }
 
-function nodeColor(highlightTitel) {
-  node = node.attr("fill", (d) => {
-    if (d.id == highlightTitel) {
+function nodeColor(highlightTitel)
+{
+  node = node.attr("fill", (d) =>
+  {
+    if (d.id == highlightTitel)
+    {
       return "green";
     }
     return "black";
   });
 }
 
-function updateLink() {
+function updateLink()
+{
   d3.select("#shareA").attr(
     "href",
     `${location.origin}${location.pathname}?pageids=${Object.values(dataNodes)
@@ -174,7 +186,8 @@ function updateLink() {
   );
 }
 
-function validId(titel) {
+function validId(titel)
+{
   titel = titel
     .replace(/ /g, "_")
     .replace(/^[^a-z]|[^\w:-]/gi, (m) => m.charCodeAt(0));
@@ -189,15 +202,18 @@ linkFrom[y] contain all the pages with links to page y.
 
 let pageContainer = d3.select("#pageContainer");
 
-function loadWikiPage(titel, scrollTo, eraseforwardStack = true) {
+function loadWikiPage(titel, scrollTo, eraseforwardStack = true)
+{
   titel = titel.replace(/_/g, " ");
 
   let pr = null;
 
-  if (!(titel in dataNodes)) {
+  if (!(titel in dataNodes))
+  {
     pr = d3
       .html(`https://en.wikipedia.org/api/rest_v1/page/html/${titel}`)
-      .then(function (data) {
+      .then(function (data)
+      {
         if (currentPage != null) currentPage.style("display", "none");
 
         currentPage = pageContainer.append("div").attr("id", validId(titel));
@@ -223,7 +239,8 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true) {
           .attr("id", "firstHeading")
           .html(titel);
 
-        currentPage.selectAll("a").each(function () {
+        currentPage.selectAll("a").each(function ()
+        {
           let last = d3.select(this).attr("href");
 
           let mat = last.match(
@@ -232,31 +249,30 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true) {
 
           const linkTitel = mat != null ? mat[1].replace(/_/g, " ") : "";
 
-          if (mat != null) {
+          if (mat != null)
+          {
             d3.select(this).attr(
               "href",
-              `javascript:loadWikiPage(\`${linkTitel}\`, ${
-                typeof mat[2] === "undefined" ? "undefined" : `\`${mat[2]}\``
+              `javascript:loadWikiPage(\`${linkTitel}\`, ${typeof mat[2] === "undefined" ? "undefined" : `\`${mat[2]}\``
               });`
             );
 
-            if (linkTitel != titel) {
-              if (linkTitel in linkFrom) {
-                /*let linksFromLinkTitel = linkFrom[linkTitel];
-                                let lastSize = linksFromLinkTitel.size;
-                                linksFromLinkTitel.add(titel);
-                                if(lastSize == 1 && linksFromLinkTitel.size == 2)
-                                {
-                                    console.log(linkTitel);
-                                }*/
-              } else {
+            if (linkTitel != titel)
+            {
+              if (linkTitel in linkFrom)
+              {
+
+              } else
+              {
                 linkFrom[linkTitel] = {};
               }
 
               let id = d3.select(this).attr("id");
 
-              if (!(titel in linkFrom[linkTitel])) {
-                if (id == null) {
+              if (!(titel in linkFrom[linkTitel]))
+              {
+                if (id == null)
+                {
                   id = validId(titel + " to " + linkTitel);
                   d3.select(this).attr("id", id);
                 }
@@ -264,20 +280,26 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true) {
                 //console.log(`set linkFrom[${linkTitel}][${titel}] = ${id}`);
               }
 
-              if (linkTitel in dataNodes) {
+              if (linkTitel in dataNodes)
+              {
                 addLink(titel, linkTitel, id);
                 //console.log(id);
               }
             }
-          } else {
+          } else
+          {
             d3.select(this).attr("target", "_blank");
           }
         });
       })
-      .then(function () {
-        Object.keys(dataNodes).forEach((e) => {
-          if (e in linkFrom) {
-            Object.entries(linkFrom[e]).forEach((l) => {
+      .then(function ()
+      {
+        Object.keys(dataNodes).forEach((e) =>
+        {
+          if (e in linkFrom)
+          {
+            Object.entries(linkFrom[e]).forEach((l) =>
+            {
               //console.log(`get linkFrom[${e}][${l[0]}] = ${l[1]}`);
               addLink(l[0], e, l[1]);
             });
@@ -286,8 +308,10 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true) {
 
         update();
       });
-  } else {
-    pr = Promise.resolve().then(function () {
+  } else
+  {
+    pr = Promise.resolve().then(function ()
+    {
       let newPage = d3.select(`#pageContainer > #${validId(titel)}`);
 
       changePage(currentPage, newPage);
@@ -296,7 +320,8 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true) {
     });
   }
 
-  pr.then(function () {
+  pr.then(function ()
+  {
     currentPage
       .selectAll(".highlight-yellow")
       .classed("highlight-yellow", false);
@@ -309,12 +334,14 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true) {
     backButton.property("disabled", backStack.length < 2);
     deleteButton.property("disabled", false);
 
-    if (eraseforwardStack) {
+    if (eraseforwardStack)
+    {
       forwardStack = [];
       forwardButton.property("disabled", true);
     }
 
-    if (typeof scrollTo !== "undefined") {
+    if (typeof scrollTo !== "undefined")
+    {
       //console.log(scrollTo);
 
       currentPage
@@ -322,7 +349,8 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true) {
         .classed("highlight-yellow", true)
         .node()
         .scrollIntoView();
-    } else {
+    } else
+    {
       currentPage.node().scrollTop = 0;
     }
   });
@@ -335,25 +363,32 @@ let params = new URLSearchParams(location.search);
 */
 
 let pr = null;
-if (params.has("pageids")) {
+if (params.has("pageids"))
+{
   pr = d3
     .json(
       `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&pageids=${params.get(
         "pageids"
       )}`
     )
-    .then((data) => {
+    .then((data) =>
+    {
       return Object.values(data.query.pages).map((d) => d.title);
     });
-} else if (params.has("pages")) {
-  pr = Promise.resolve().then(() => {
+} else if (params.has("pages"))
+{
+  pr = Promise.resolve().then(() =>
+  {
     return params.get("pages").split("|");
   });
 }
 
-if (pr != null) {
-  pr.then((initPages) => {
-    initPages.forEach((p) => {
+if (pr != null)
+{
+  pr.then((initPages) =>
+  {
+    initPages.forEach((p) =>
+    {
       loadWikiPage(p);
     });
   });
@@ -368,7 +403,8 @@ let forwardStack = [];
 const backButton = d3.select("#backButton");
 const forwardButton = d3.select("#forwardButton");
 
-backButton.on("click", () => {
+backButton.on("click", () =>
+{
   forwardStack.push(backStack.pop());
 
   const page = backStack.pop();
@@ -377,7 +413,8 @@ backButton.on("click", () => {
   forwardButton.property("disabled", false);
 });
 
-forwardButton.on("click", () => {
+forwardButton.on("click", () =>
+{
   const page = forwardStack.pop();
   loadWikiPage(page[0], page[1], false);
 
@@ -386,7 +423,8 @@ forwardButton.on("click", () => {
 
 const deleteButton = d3.select("#deleteButton");
 
-deleteButton.on("click", () => {
+deleteButton.on("click", () =>
+{
   const titel = backStack.pop()[0];
 
   delete dataNodes[titel];
@@ -394,18 +432,22 @@ deleteButton.on("click", () => {
   currentPage.remove();
 
   let linkEntries = Object.entries(dataLinks);
-  linkEntries.forEach((e) => {
-    if (e[1].source.id == titel || e[1].target.id == titel) {
+  linkEntries.forEach((e) =>
+  {
+    if (e[1].source.id == titel || e[1].target.id == titel)
+    {
       delete dataLinks[`${e[1].source.id}[to]${e[1].target.id}`];
     }
   });
 
   const len = backStack.length;
 
-  if (len > 0) {
+  if (len > 0)
+  {
     const page = backStack.pop();
     loadWikiPage(page[0], page[1], false);
-  } else {
+  } else
+  {
     deleteButton.property("disabled", true);
   }
   backButton.property("disabled", len <= 1);
