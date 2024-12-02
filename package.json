@@ -1,0 +1,21 @@
+{
+  "name": "wikipedia-graph",
+  "version": "1.0.0",
+  "description": "[Graph/Network](https://en.wikipedia.org/wiki/Directed_graph) interface to [Wikipedia](https://en.wikipedia.org/).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.7.8",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "multer": "^1.4.5-lts.1",
+    "nodemon": "^3.1.7",
+    "wikipedia-graph": "file:"
+  }
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Jquery CDN -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+</head>
+
+<body>
+    <div id="pageContainer" class="flex justify-center items-center h-screen bg-gray-100">
+        <div id="searchDiv" class="flex space-x-4 bg-white p-6 rounded-lg shadow-md">
+            <!-- Search Input -->
+            <div class="flex-grow">
+                <input id="inputTitle" placeholder="Type Something, e.g., Millennial Market" autocomplete="off"
+                    type="text"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
+                <div id="suggestions" class="mt-2"></div>
+            </div>
+
+            <!-- Random Article Button -->
+            <a id="randmArticle"
+                class="px-6 py-3 bg-blue-500 text-white font-semibold rounded-full shadow hover:bg-blue-600 transition duration-200 text-center cursor-pointer">
+                Random Article
+            </a>
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,2 @@
+Following problems are observed: 
+1. Browser compatibility issue. It doesn't render well on Safari. 
