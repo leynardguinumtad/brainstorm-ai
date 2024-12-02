@@ -54,7 +54,7 @@ const svg = d3
   .select("#svgcontainer")
   .append("svg")
   .style("flex-grow", "1")
-  .attr("viewBox", [0, 0, width, height]);
+  .attr("viewBox", [0, 0, 800, 800]);
 svg.call(
   d3.zoom().on("zoom", function ({ transform })
   {
