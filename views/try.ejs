@@ -1,95 +1,53 @@
-<body id="body">
-    <style>
-        /* Body styling for layout */
-        #body {
-            display: flex;
-            flex-direction: row;
-            overflow: hidden;
-            height: 100vh;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+<!DOCTYPE html>
+<html lang="en">
 
-        /* Left container (includes navbar and pageContainer) */
-        #leftDiv {
-            flex-basis: 65%;
-            display: flex;
-            flex-direction: column;
-            background-color: #f6f6f6;
-            border-right: 1px solid #ccc;
-        }
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikipedia Sentence Finder</title>
+    <link rel="stylesheet"
+        href="//en.wikipedia.org/w/load.php?debug=false&lang=en&modules=mediawiki.legacy.commonPrint,shared|skins.vector.styles&only=styles&skin=vector&*">
+</head>
 
-        /* Navbar styling */
-        #navbar {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background-color: #eaeaea;
-            border-bottom: 1px solid #ccc;
-        }
+<body>
+    <div id="wiki-content">
+        <!-- Wikipedia content will be loaded here -->
 
-        #navbar button {
-            height: 40px;
-            width: 40px;
-            margin-right: 10px;
-            border: 1.5px solid #ccc;
-            border-radius: 5px;
-            background-color: #4a90e2;
-            color: #fff;
-            cursor: pointer;
-        }
+        <p>cat cat cat A.</p>
+        <p>cat cat cat B.</p>
+        <p>Lorem ipsum <a href="https://example.com">dolor sit amet</a> and secutor el eloor <a
+                href="https://example.com">cat</a>, consectetur adipiscing elit. Sed do eiusmod.
 
-        #navbar button:hover {
-            background-color: #357abd;
-        }
-
-        /* Page container styling */
-        #pageContainer {
-            flex-grow: 1;
-            margin: 20px;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            overflow-y: auto;
-            position: relative;
-        }
-
-        #pageContainer>* {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-        }
-
-        /* Right container (svgContainer) */
-        #svgcontainer {
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #ffffff;
-            margin: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-    </style>
-
-    <div id="leftDiv">
-        <div id="navbar">
-            <button id="backButton" title="Back">back</button>
-            <button id="forwardButton" title="Forward">forward</button>
-            <button id="deleteButton" title="Remove">delete</button>
-        </div>
-
-        <div id="pageContainer">
-            <p>pageContainer</p>
-        </div>
+        </p>
+        <p>cat cat cat C.</p>
     </div>
 
-    <div id="svgcontainer">
-        <p>svgContainer</p>
-    </div>
+    <script>
+        document.getElementById('wiki-content').addEventListener('click', function (event)
+        {
+            if (event.target.tagName === 'A')
+            {
+                event.preventDefault(); // Prevent default link behavior
 
-    <script src="/js/index.js"></script>
+                // Get the clicked link's parent element
+                const parentText = event.target.parentElement.textContent;
+
+                // Extract the sentence containing the clicked link
+                const regex = /[^.!?]*[.!?]/g; // Regex to split text into sentences
+                const sentences = parentText.match(regex);
+                const clickedLinkText = event.target.textContent;
+
+                // Find the sentence with the link
+                const sentenceWithLink = sentences.find(sentence => sentence.includes(clickedLinkText));
+
+                if (sentenceWithLink)
+                {
+                    console.log('Sentence with link:', sentenceWithLink.trim());
+                    // You can handle this sentence as needed, such as displaying or sending it to a server
+                }
+            }
+        });
+    </script>
 </body>
+
+</html>

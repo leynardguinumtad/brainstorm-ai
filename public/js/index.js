@@ -1,4 +1,43 @@
+let list_selected_texts = [];
 
+
+// ===========================================================================
+
+// Function to display a list of text inside the specified container
+function displayTextInContainer(textList)
+{
+  // Get the container element
+  const container = document.getElementById('rawTextContainer');
+
+  // Clear the container of any existing content
+  container.innerHTML = '';
+
+  // Add the title back to the container
+  const title = document.createElement('p');
+  title.className = 'text-center';
+  title.textContent = 'Raw Texts';
+  container.appendChild(title);
+
+  // Create a list element to hold the texts
+  const list = document.createElement('ul');
+  list.style.listStyleType = 'none'; // Remove bullet points for a clean look
+  list.style.padding = '0'; // Remove padding
+
+  // Populate the list with text items
+  textList.forEach(text =>
+  {
+    const listItem = document.createElement('li');
+    listItem.textContent = text;
+    listItem.style.marginBottom = '0.5rem'; // Add spacing between items
+    list.appendChild(listItem);
+  });
+
+  // Append the list to the container
+  container.appendChild(list);
+}
+
+
+// ===========================================================================
 let currentPage = null;
 
 function changePage(oldPage, newPage)
@@ -167,7 +206,6 @@ function addLink(source, target, linkId)
   if (!(key in dataLinks))
   {
     dataLinks[key] = { source: source, target: target, linkId: linkId };
-    //                 dataNodes[source] dataNodes[target]
 
     return true;
   }
@@ -262,17 +300,45 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true)
 
           if (mat != null)
           {
-            d3.select(this).attr(
-              "href",
-              `javascript:loadWikiPage(\`${linkTitel}\`, ${typeof mat[2] === "undefined" ? "undefined" : `\`${mat[2]}\``
-              });`
-            );
+            d3.select(this)
+              .attr(
+                "href",
+                `javascript:loadWikiPage(\`${linkTitel}\`, ${typeof mat[2] === "undefined" ? "undefined" : `\`${mat[2]}\``
+                });`
+              )
+              .on("click", function (event)
+              {
+                event.preventDefault(); // Prevent default link behavior
+
+                // Get the clicked link's parent element
+                const parentText = event.target.parentElement.textContent;
+
+                // Extract the sentence containing the clicked link
+                const regex = /[^.!?]*[.!?]/g; // Regex to split text into sentences
+                const sentences = parentText.match(regex);
+                const clickedLinkText = event.target.textContent;
+
+                // Find the sentence with the link
+                const sentenceWithLink = sentences.find((sentence) =>
+                  sentence.includes(clickedLinkText)
+                );
+
+                if (sentenceWithLink)
+                {
+                  list_selected_texts.push(sentenceWithLink.trim());
+                  console.log(list_selected_texts);
+                  //display in the container
+                  displayTextInContainer(list_selected_texts);
+                }
+
+                // Load the new Wikipedia page
+                loadWikiPage(linkTitel);
+              });
 
             if (linkTitel != titel)
             {
               if (linkTitel in linkFrom)
               {
-
               } else
               {
                 linkFrom[linkTitel] = {};
@@ -288,13 +354,11 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true)
                   d3.select(this).attr("id", id);
                 }
                 linkFrom[linkTitel][titel] = id;
-                //console.log(`set linkFrom[${linkTitel}][${titel}] = ${id}`);
               }
 
               if (linkTitel in dataNodes)
               {
                 addLink(titel, linkTitel, id);
-                //console.log(id);
               }
             }
           } else
@@ -302,6 +366,7 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true)
             d3.select(this).attr("target", "_blank");
           }
         });
+
       })
       .then(function ()
       {
@@ -466,3 +531,4 @@ deleteButton.on("click", () =>
   updateLink();
   update();
 });
+
