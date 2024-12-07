@@ -1,13 +1,19 @@
-let list_selected_texts = [];
-
+let list_selected_texts = []; // Ensure this array is populated before calling llm
 
 // ===========================================================================
-
 // Function to display a list of text inside the specified container
 function displayTextInContainer(textList)
 {
+  // Update the global list_selected_texts
+  list_selected_texts = textList;
+
   // Get the container element
   const container = document.getElementById('rawTextContainer');
+  if (!container)
+  {
+    console.error('Element with ID "rawTextContainer" not found.');
+    return;
+  }
 
   // Clear the container of any existing content
   container.innerHTML = '';
@@ -34,8 +40,68 @@ function displayTextInContainer(textList)
 
   // Append the list to the container
   container.appendChild(list);
+
 }
 
+// ===========================================================================
+// Function to handle the LLM process
+async function llm()
+{
+  const responseDiv = document.getElementById('transformedTextContainer');
+  if (!responseDiv)
+  {
+    console.error('Element with ID "transformedTextContainer" not found.');
+    return;
+  }
+
+  responseDiv.innerHTML = ''; // Clear previous responses
+
+  try
+  {
+    // Send the list_selected_texts array to the server
+    // const response = await fetch('/start-stream', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({ list_selected_texts }), // Send array to server
+    // });
+
+    // Use absolute URL for fetch and EventSource
+    const response = await fetch('http://localhost:3000/start-stream', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ list_selected_texts }),
+    });
+
+
+
+    if (!response.ok)
+    {
+      responseDiv.innerHTML = `<p><em>Error occurred while initiating the stream: ${response.statusText}</em></p>`;
+      return;
+    }
+
+    // Open SSE connection for the streamed response
+    // const eventSource = new EventSource('/llm-stream');
+    const eventSource = new EventSource('http://localhost:3000/llm-stream');
+
+    eventSource.onmessage = function (event)
+    {
+      responseDiv.innerHTML += event.data; // Append chunk to the response div
+    };
+
+    eventSource.onerror = function ()
+    {
+      responseDiv.innerHTML += '<p><em>Error occurred while receiving the response.</em></p>';
+      eventSource.close();
+    };
+  } catch (error)
+  {
+    console.error('Error during fetch or SSE connection:', error);
+    responseDiv.innerHTML = `<p><em>Unexpected error occurred: ${error.message}</em></p>`;
+  }
+}
 
 // ===========================================================================
 let currentPage = null;
@@ -329,6 +395,7 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true)
                   console.log(list_selected_texts);
                   //display in the container
                   displayTextInContainer(list_selected_texts);
+                  llm();
                 }
 
                 // Load the new Wikipedia page
