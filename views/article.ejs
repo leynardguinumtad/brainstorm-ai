@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -56,6 +56,138 @@
         // Load the default article "Cat" when the page loads
         loadWikipediaArticle();
     </script>
+</body>
+
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wikipedia Loader</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #wiki-container {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        .highlighted {
+            background-color: yellow;
+            /* Highlight color */
+        }
+    </style>
+</head>
+
+<body>
+    <div id="wiki-container">Loading Wikipedia article...</div>
+
+    <script>
+
+        // Simulating a "database" of previously highlighted texts
+        const storedHighlightedTexts = [
+            "Female domestic cats can have kittens from spring to late autumn in temperate zones",
+            "As of 2017, the domestic cat was the second most popular pet in the United States, with 95.6 million cats owned and around 42 million",
+        ];
+
+        // Array to hold new highlighted texts
+        const highlightedTexts = [...storedHighlightedTexts];
+
+        // Function to highlight text in the paragraph
+        function applyHighlights()
+        {
+            const article = document.getElementById("wiki-container");
+            const content = article.innerHTML;
+
+            // Loop through stored highlights and wrap them in a span
+            storedHighlightedTexts.forEach((text) =>
+            {
+                const regex = new RegExp(`(${text})`, "g");
+                console.log(regex)
+                article.innerHTML = article.innerHTML.replace(
+                    regex,
+                    `<span class="highlighted">$1</span>`
+                );
+            });
+        }
+
+        // Function to handle text selection for new highlights
+        document.getElementById("wiki-container").addEventListener("mouseup", () =>
+        {
+            const selection = window.getSelection();
+            const selectedText = selection.toString().trim();
+
+            if (selectedText && !highlightedTexts.includes(selectedText))
+            {
+                // Add selected text to the array
+                highlightedTexts.push(selectedText);
+
+                // Highlight the selected text
+                const range = selection.getRangeAt(0);
+                const span = document.createElement("span");
+                span.className = "highlighted";
+                span.textContent = selectedText;
+
+                // Replace the selected text in the DOM with the highlighted span
+                range.deleteContents();
+                range.insertNode(span);
+
+                // Clear the selection
+                selection.removeAllRanges();
+
+                // Log the array of highlighted text
+                console.log(highlightedTexts);
+            }
+        });
+
+
+        /**
+         * Load a Wikipedia article into the specified container.
+         * @param {string} term - The term to search for on Wikipedia.
+         * @param {string} containerId - The ID of the container to load content into.
+         */
+        function loadWikipediaArticle(term = "Cat", containerId = "wiki-container")
+        {
+            const url = `https://en.wikipedia.org/api/rest_v1/page/html/${encodeURIComponent(term)}`;
+            const container = document.getElementById(containerId);
+
+            axios.get(url)
+                .then(response =>
+                {
+                    // Set the Wikipedia content inside the container
+                    container.innerHTML = response.data;
+                    // Apply highlights on page load
+                    setTimeout(applyHighlights, 1000);
+                })
+                .catch(error =>
+                {
+                    console.error("Error loading Wikipedia article:", error);
+                    container.innerHTML = `<p>Could not load the Wikipedia article for "${term}". Please try again later.</p>`;
+                });
+        }
+
+        // Load the default article "Cat" when the page loads
+        loadWikipediaArticle();
+
+
+
+    </script>
+
+
 </body>
 
 </html>
