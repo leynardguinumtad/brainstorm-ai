@@ -36,13 +36,18 @@
             padding: 20px;
             border-right: 1px solid #ccc;
             max-width: 450px;
-            margin: 20px;
+
+            /* Default margin on all sides */
+
+
         }
+
 
         #navbar {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
+            margin-top: 80px;
         }
 
         #navbar button {
@@ -100,51 +105,32 @@
 </head>
 
 <body id="body">
-    <div id="leftDiv">
-        <div id="navbar">
-            <button id="backButton">Back</button>
-            <button id="forwardButton">Forward</button>
-            <button id="deleteButton">Delete</button>
+    <%- include('partials/header.ejs') %>
+        <div id="leftDiv">
+            <div id="navbar">
+                <button id="backButton">Back</button>
+                <button id="forwardButton">Forward</button>
+                <button id="deleteButton">Delete</button>
+            </div>
+            <div id="pageContainer">
+
+            </div>
         </div>
-        <div id="pageContainer">
-
+        <div id="svgcontainer">
         </div>
-    </div>
-    <div id="svgcontainer">
-    </div>
 
-    <!-- Floating Surface Container -->
-    <div id="rawTextContainer"
-        class="fixed top-5 right-5 z-50 bg-gray-600 bg-opacity-80 text-white text-xs p-5 rounded-lg shadow-lg w-96 h-72 overflow-auto">
-        <p class="text-center">Raw Texts</p>
-    </div>
+        <!-- Floating Surface Container -->
+        <div id="rawTextContainer"
+            class="fixed top-24 right-5 z-50 bg-gray-600 bg-opacity-80 text-white text-xs p-5 rounded-lg shadow-lg w-96 h-56 overflow-auto">
+            <p class="text-center">Raw Texts</p>
+        </div>
 
-    <div id="transformedTextContainer"
-        class="fixed top-80 right-5 z-50 bg-gray-600 bg-opacity-80 text-white text-xs p-5 rounded-lg shadow-lg w-96 h-80 overflow-auto">
-        <p class="text-center">Transformed Text</p>
-    </div>
-
-
-
-
-
-    <script src="/js/index.js"></script>
+        <div id="transformedTextContainer"
+            class="fixed top-96 right-5 z-50 bg-gray-600 bg-opacity-80 text-white text-xs p-5 rounded-lg shadow-lg w-96 h-72 overflow-auto">
+            <p class="text-center">Transformed Text</p>
+        </div>
+        <script src="/js/index.js"></script>
 
 </body>
 
 </html>
-
-<!-- <button id=""
-    class="fixed bottom-36 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-500 focus:outline-none">
-    <i class="fa-solid fa-pen-to-square fa-lg" style="color: #ffffff;"></i>
-</button>
-
-<button id=""
-    class="fixed bottom-20 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-500 focus:outline-none">
-    <i class="fa-solid fa-pen-to-square fa-lg" style="color: #ffffff;"></i>
-</button>
-
-<button id=""
-    class="fixed bottom-3 right-6 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-500 focus:outline-none">
-    <i class="fa-solid fa-pen-to-square fa-lg" style="color: #ffffff;"></i>
-</button> -->

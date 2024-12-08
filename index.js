@@ -4,6 +4,7 @@ const axios = require("axios");
 const app = express();
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { render } = require("ejs");
 
 const genAI = new GoogleGenerativeAI("AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -44,8 +45,38 @@ app.get("/", async (req, res) =>
         res.status(400).send(`${error}`);
 
     }
+});
+
+app.get('/highlight', (req, res) =>
+{
+    res.render('highlight');
+});
+
+app.get('/load-wiki', async (req, res) =>
+{
+    const article = req.query.article || 'Node.js';
+    const wikipediaUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(article)}`;
+
+    try
+    {
+        const response = await axios.get(wikipediaUrl);
+        const data = response.data;
+        res.render('wiki', { articleData: data });
+    } catch (error)
+    {
+        res.render('wiki', { articleData: null });
+    }
+});
 
 
+app.get('/article', (req, res) =>
+{
+    res.render('article');
+})
+
+app.get('/wiki', (req, res) =>
+{
+    res.render('wiki', { articleData: null });
 });
 
 app.get("/brainstorm", (req, res) =>
@@ -53,67 +84,16 @@ app.get("/brainstorm", (req, res) =>
     res.render("brainstorm");
 });
 
+app.get('/brainstorm2', (req, res) =>
+{
+    res.render('brainstorm-from-text');
+});
+
 app.get("/search", (req, res) =>
 {
     res.render("search");
 });
 
-
-app.get("/about", (req, res) =>
-{
-    res.render("about");
-});
-
-app.get('/try', (req, res) =>
-{
-    res.render('try');
-});
-
-app.get('/llm', async (req, res) =>
-{
-    const prompt = "Write a story about a magic backpack.";
-
-    const result = await model.generateContentStream(prompt);
-
-    // Print text as it comes in.
-    for await (const chunk of result.stream)
-    {
-        const chunkText = chunk.text();
-        process.stdout.write(chunkText);
-    }
-});
-
-
-// app.get('/llm', async (req, res) =>
-// {
-//     res.setHeader('Content-Type', 'text/event-stream');
-//     res.setHeader('Cache-Control', 'no-cache');
-//     res.setHeader('Connection', 'keep-alive');
-
-//     // const prompt = "Write a story about a magic backpack.";
-//     const prompt = req.query.question;
-
-//     try
-//     {
-//         const result = await model.generateContentStream(prompt);
-
-//         // Stream the response chunks
-//         for await (const chunk of result.stream)
-//         {
-//             const chunkText = chunk.text();
-//             console.log(chunkText);
-
-//             res.write(`data: ${chunkText}\n\n`);
-//         }
-
-//         res.end(); // Close the SSE connection when done
-//     } catch (error)
-//     {
-//         console.error("Error generating content stream:", error);
-//         res.write(`data: Error generating response: ${error.message}\n\n`);
-//         res.end();
-//     }
-// });
 
 let list_selected_texts = []; // To store the questions temporarily
 
@@ -137,7 +117,6 @@ app.get('/llm-stream', async (req, res) =>
 
     try
     {
-
         const prompt = `relate the following texts: ${list_selected_texts}`;
         console.log(prompt);
 
@@ -163,10 +142,33 @@ app.get('/llm-stream', async (req, res) =>
 
 app.get('/ask', (req, res) =>
 {
-    res.render('ask');
-})
+    res.render('test/ask');
+});
 
 
+app.get("/about", (req, res) =>
+{
+    res.render("about");
+});
+
+app.get('/try', (req, res) =>
+{
+    res.render('test/try');
+});
+
+app.get('/llm', async (req, res) =>
+{
+    const prompt = "Write a story about a magic backpack.";
+
+    const result = await model.generateContentStream(prompt);
+
+    // Print text as it comes in.
+    for await (const chunk of result.stream)
+    {
+        const chunkText = chunk.text();
+        process.stdout.write(chunkText);
+    }
+});
 
 // Step 5: Start the server
 const PORT = process.env.PORT || 3000;
