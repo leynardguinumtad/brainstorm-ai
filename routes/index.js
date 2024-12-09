@@ -4,7 +4,11 @@ const express = require('express');
 const router = express.Router();
 
 
-router.get("/", async (req, res) =>
+router.get("/", (req, res) =>
+{
+    res.render("landing");
+});
+router.get("/home", async (req, res) =>
 {
     const today = new Date();
     const yyyy = today.getFullYear();
