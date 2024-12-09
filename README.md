@@ -14,3 +14,10 @@ This is an end term requirement for system integration and architecture (SIA). T
 1.  In brainstorm1 views, it includes all the pages responsible for the feature of browsing wikipedia, extracting raw text, and transtorming raw text using LLM.
 2.  In brainstorm2 views, it includes the pages for the features of hightlighting a text from a wikipedia and generating a force directed graph.
 3.  In the auth views folder, the login, register, terms and conditions are stored.
+
+##### Basic Routing
+
+1. `localhost:3000/` navigates to the landing page
+2. `localhost:3000/home` navigates to to the home page (DASHBOARD).
+3. `localhost:3000/auth/login` navigates to the login page
+4. `localhost:3000/auth/register` navigates to the register page
