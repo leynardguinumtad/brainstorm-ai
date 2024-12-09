@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<%- include('partials/head.ejs', {title: "Dashboard" }) %>
+<%- include('partials/head.ejs', {title: "Home" }) %>
 
     <body class="bg-gray-100">
         <%- include('partials/header.ejs') %>
@@ -9,7 +9,7 @@
             <main class="px-24 mt-24">
                 <!-- Brainstorm Button -->
                 <div class="flex justify-end mb-4">
-                    <a href="/search">
+                    <a href="/brainstorm1/search">
                         <button class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
                             Brainstorm +
                         </button>
@@ -32,7 +32,7 @@
                                         <div class="w-1/2 flex flex-col justify-between">
                                             <div>
                                                 <!-- Full Title that wraps -->
-                                                <a href="/brainstorm?pageids=<%= article.pageId %>" target="_blank"
+                                                <a href="/brainstorm1/lab?pageids=<%= article.pageId %>" target="_blank"
                                                     class="hover:text-blue-500" rel="noopener noreferrer">
                                                     <h3 class="text-lg font-semibold mb-2 break-words">
                                                         <%= article.title %>

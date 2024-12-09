@@ -59,16 +59,8 @@ async function llm()
   try
   {
     // Send the list_selected_texts array to the server
-    // const response = await fetch('/start-stream', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({ list_selected_texts }), // Send array to server
-    // });
-
     // Use absolute URL for fetch and EventSource
-    const response = await fetch('http://localhost:3000/start-stream', {
+    const response = await fetch('http://localhost:3000/brainstorm1/start-stream', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ list_selected_texts }),
@@ -84,7 +76,7 @@ async function llm()
 
     // Open SSE connection for the streamed response
     // const eventSource = new EventSource('/llm-stream');
-    const eventSource = new EventSource('http://localhost:3000/llm-stream');
+    const eventSource = new EventSource('http://localhost:3000/brainstorm1/llm-stream');
 
     eventSource.onmessage = function (event)
     {

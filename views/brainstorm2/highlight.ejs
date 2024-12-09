@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persistent Text Highlighter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        .highlighted {
+            background-color: yellow;
+            /* Highlight color */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Article</h1>
+    <p id="article">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus luctus eros aliquet
+        convallis ultricies. Mauris augue massa, ultricies non ligula. Suspendisse imperdiet.
+        Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem. Donec rutrum congue leo eget malesuada.
+    </p>
+
+    <script>
+        // Simulating a "database" of previously highlighted texts
+        const storedHighlightedTexts = [
+            "Lorem ipsum dolor sit amet",
+            "Suspendisse imperdiet",
+            "Donec rutrum congue leo eget malesuada"
+        ];
+
+        // Array to hold new highlighted texts
+        const highlightedTexts = [...storedHighlightedTexts];
+
+        // Function to highlight text in the paragraph
+        function applyHighlights()
+        {
+            const article = document.getElementById("article");
+            const content = article.innerHTML;
+
+            // Loop through stored highlights and wrap them in a span
+            storedHighlightedTexts.forEach((text) =>
+            {
+                const regex = new RegExp(`(${text})`, "g");
+                article.innerHTML = article.innerHTML.replace(
+                    regex,
+                    `<span class="highlighted">$1</span>`
+                );
+            });
+        }
+
+        // Apply highlights on page load
+        applyHighlights();
+
+        // Function to handle text selection for new highlights
+        document.getElementById("article").addEventListener("mouseup", () =>
+        {
+            const selection = window.getSelection();
+            const selectedText = selection.toString().trim();
+
+            if (selectedText && !highlightedTexts.includes(selectedText))
+            {
+                // Add selected text to the array
+                highlightedTexts.push(selectedText);
+
+                // Highlight the selected text
+                const range = selection.getRangeAt(0);
+                const span = document.createElement("span");
+                span.className = "highlighted";
+                span.textContent = selectedText;
+
+                // Replace the selected text in the DOM with the highlighted span
+                range.deleteContents();
+                range.insertNode(span);
+
+                // Clear the selection
+                selection.removeAllRanges();
+
+                // Log the array of highlighted text
+                console.log(highlightedTexts);
+            }
+        });
+    </script>
+</body>
+
+</html>
