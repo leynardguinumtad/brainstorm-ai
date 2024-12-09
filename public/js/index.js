@@ -1,7 +1,12 @@
 let list_selected_texts = []; // Ensure this array is populated before calling llm
 
 // ===========================================================================
-// Function to display a list of text inside the specified container
+
+
+
+
+
+
 function displayTextInContainer(textList)
 {
   // Update the global list_selected_texts
@@ -20,31 +25,50 @@ function displayTextInContainer(textList)
 
   // Add the title back to the container
   const title = document.createElement('p');
-  title.className = 'text-center';
+  title.className = 'container-title';
+  title.style.fontWeight = 'bold';
   title.textContent = 'Raw Texts';
   container.appendChild(title);
 
   // Create a list element to hold the texts
   const list = document.createElement('ul');
   list.style.listStyleType = 'none'; // Remove bullet points for a clean look
-  list.style.padding = '0'; // Remove padding
+  list.style.padding = '0'; // Remove default padding for the list
 
   // Populate the list with text items
-  textList.forEach(text =>
+  textList.forEach((text, index) =>
   {
     const listItem = document.createElement('li');
-    listItem.textContent = text;
+    listItem.style.display = 'flex';
+    listItem.style.alignItems = 'center';
     listItem.style.marginBottom = '0.5rem'; // Add spacing between items
+
+    // Create the number element inside a circle
+    const numberCircle = document.createElement('span');
+    numberCircle.textContent = index + 1; // Numbering starts from 1
+    numberCircle.style.display = 'inline-block';
+    numberCircle.style.width = '24px';
+    numberCircle.style.height = '24px';
+    numberCircle.style.borderRadius = '50%';
+    numberCircle.style.backgroundColor = 'white';
+    numberCircle.style.color = 'black';
+    numberCircle.style.textAlign = 'center';
+    numberCircle.style.lineHeight = '24px';
+    numberCircle.style.marginRight = '8px'; // Add spacing between the circle and text
+
+    // Add the number circle and text to the list item
+    listItem.appendChild(numberCircle);
+    listItem.appendChild(document.createTextNode(text));
+
+    // Append the list item to the list
     list.appendChild(listItem);
   });
 
   // Append the list to the container
   container.appendChild(list);
-
 }
 
-// ===========================================================================
-// Function to handle the LLM process
+
 async function llm()
 {
   const responseDiv = document.getElementById('transformedTextContainer');
