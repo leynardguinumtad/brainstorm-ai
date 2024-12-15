@@ -4,7 +4,7 @@ const express = require("express");
 const path = require("path");
 const axios = require("axios");
 const session = require('express-session');
-
+const flash = require('connect-flash');
 
 const app = express();
 
@@ -23,12 +23,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-app.get("/nodes", (req, res) =>
-{
-    res.render("brainstorm2/brainstorm-from-text");
-})
-
-
 //configuration of session middleware
 app.use(session({
     secret: process.env.SESSION_SECRET,
@@ -36,6 +30,16 @@ app.use(session({
     saveUninitialized: false,
     cookie: { secure: false },
 }));
+
+//this indicate to use flash middleware. 
+app.use(flash());
+//this configure the middleware to make the flash message to all views
+app.use((req, res, next) =>
+{
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+    next();
+});
 
 //Routes
 app.use("/", indexRouter);

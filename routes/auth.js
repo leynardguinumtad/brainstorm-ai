@@ -23,10 +23,19 @@ router.post("/login", (req, res) =>
         }
         else
         {
-            req.session.user_id = result[0].id;
-            console.log(`user id: ${req.session.user_id}`);
-            res.redirect("/home");
-
+            if (!result)
+            {
+                req.session.user_id = result[0].id;
+                console.log(`user id: ${req.session.user_id}`);
+                req.flash("success", "Login Successful");
+                res.redirect("/home");
+            }
+            else
+            {
+                req.flash("error", "Account not found");
+                console.log("not found");
+                res.redirect("/auth/login");
+            }
         }
     });
 });
@@ -44,10 +53,18 @@ router.post("/register", (req, res) =>
     const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
     con.query(sql, [name, email, password], (err, result) =>
     {
-        console.log(`id: ${result.insertId}`);
-        //save the id in the session
-        req.session["user_id"] = result.insertId;
-        res.redirect("/home");
+        if (err)
+        {
+            req.flash("error", err);
+            res.redirect("/auth/register");
+        } else
+        {
+            console.log(`id: ${result.insertId}`);
+            //save the id in the session
+            req.session["user_id"] = result.insertId;
+            req.flash("success", "Account created successfully");
+            res.redirect("/home");
+        }
     });
 
 

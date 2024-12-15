@@ -23,9 +23,19 @@ router.post("/", (req, res) =>
         }
         else
         {
-            req.session.admin_user_id = result[0].id;
-            console.log(req.session.admin_user_id);
-            res.redirect("/admin/home");
+            if (!result)
+            {
+                req.session.admin_user_id = result[0].id;
+                console.log(req.session.admin_user_id);
+                req.flash("success", "Login Successful");
+                res.redirect("/admin/home");
+            }
+            else
+            {
+                console.log("not found");
+                req.flash("error", "Account not found");
+                res.redirect("/admin/");
+            }
         }
     });
 });
