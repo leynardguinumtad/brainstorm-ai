@@ -8,6 +8,26 @@ router.get("/", (req, res) =>
 {
     res.render("landing");
 });
+
+router.get("/logout", (req, res) =>
+{
+    req.session.destroy((err) =>
+    {
+        if (err)
+        {
+            console.error(err);
+            res.redirect("/auth/login");
+
+        }
+        else
+        {
+            console.log("session destroyed");
+            res.redirect("/auth/login");
+
+        }
+    })
+});
+
 router.get("/home", async (req, res) =>
 {
     const today = new Date();
@@ -40,5 +60,15 @@ router.get("/home", async (req, res) =>
     }
 });
 
+router.post("/try-axios", (req, res) =>
+{
+    const { var1, var2 } = req.body;
+    console.log("axios is working");
+    console.log(var1);
+    console.log(var2);
+
+
+
+});
 
 module.exports = router;

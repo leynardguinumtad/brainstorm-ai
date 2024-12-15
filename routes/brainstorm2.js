@@ -1,10 +1,16 @@
+const path = require('path');
+const axios = require('axios');
+const express = require('express');
 
-app.get('/highlight', (req, res) =>
+const router = express.Router();
+
+
+router.get('/highlight', (req, res) =>
 {
     res.render('highlight');
 });
 
-app.get('/load-wiki', async (req, res) =>
+router.get('/load-wiki', async (req, res) =>
 {
     const article = req.query.article || 'Node.js';
     const wikipediaUrl = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(article)}`;
@@ -21,18 +27,21 @@ app.get('/load-wiki', async (req, res) =>
 });
 
 
-app.get('/article', (req, res) =>
+router.get('/article', (req, res) =>
 {
-    res.render('article');
+    res.render('brainstorm2/article');
 })
 
-app.get('/wiki', (req, res) =>
+router.get('/wiki', (req, res) =>
 {
-    res.render('wiki', { articleData: null });
+    res.render('brainstorm2/wiki', { articleData: null });
 });
 
 
-app.get('/brainstorm2', (req, res) =>
+router.get('/brainstorm2', (req, res) =>
 {
-    res.render('brainstorm-from-text');
+    res.render('brainstorm2/brainstorm-from-text');
 });
+
+
+module.exports = router;

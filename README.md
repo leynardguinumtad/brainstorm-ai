@@ -10,6 +10,7 @@ This is an end term requirement for system integration and architecture (SIA). T
 3. Start the mysql database. 
 4. Create a database and name it as `brainstorm_ai_db`.
 3. Run `knex migrate:latest` in the terminal to create the tables. 
+4. Run `knex seed:run` to populate the content of the admin table.
 5. In the terminal, run `npm start` to start the server. The web app is accessible through port `3000`, e.g., `localhost:3000/`.
 4. navigate to `localhost:3000/home` to explore the initial features of the web app.
 

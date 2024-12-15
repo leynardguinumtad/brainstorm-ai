@@ -129,7 +129,6 @@
         </div>
 
         <!-- Floating Surface Containers -->
-
         <div id="rawTextContainer"
             class="fixed top-24 right-5 z-50 bg-opacity-80 text-gray-600 text-xs p-5 rounded-lg  w-96 h-56  overflow-auto">
 
@@ -146,12 +145,65 @@
 
         <!-- Quill.js JavaScript -->
         <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+        <!-- Axios CDN -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
         <script>
             // Initialize Quill.js editor
             var quill = new Quill('#editor', {
                 theme: 'snow', // or 'bubble'
                 placeholder: 'Write your notes here...',
             });
+        </script>
+
+
+        <script>
+            let autoSaveTimer;
+
+            function autoSave()
+            {
+                const htmlContent = quill.root.innerHTML;
+                var lab_id = <%= lab_id %>;
+
+                console.log(htmlContent);
+                console.log(lab_id);
+
+                axios.post('http://localhost:3000/brainstorm1/save-note', { lab_id: lab_id, htmlContent: htmlContent }).then((result) =>
+                {
+                    console.log(result)
+                }).catch((err) =>
+                {
+                    console.log(err);
+                });
+            }
+
+            quill.on('text-change', () =>
+            {
+                clearTimeout(autoSaveTimer);
+                autoSaveTimer = setTimeout(autoSave, 5000);
+            });
+        </script>
+
+        <script>
+            function save_pageIds_rawText_transText()
+            {
+                var pageids = get_pageIds();
+                //list_selected_texts
+                var transformedText = document.getElementById("transformedTextContainer").innerHTML;
+                var lab_id = <%= lab_id %>;
+
+                console.log("pageids: ", pageids);
+                console.log("selected text: ", list_selected_texts);
+                console.log("ai: ", transformedText);
+
+                axios.post("http://localhost:3000/brainstorm1/save-pageids-rtext-ttext", { lab_id: lab_id, pageids: pageids, texts_list: list_selected_texts, transformedText: transformedText }).then((result) =>
+                {
+                    console.log(result);
+                }).catch((err) =>
+                {
+                    console.log(err);
+                });
+            }
         </script>
 
         <script src="/js/index.js"></script>

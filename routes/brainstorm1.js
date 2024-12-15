@@ -2,29 +2,93 @@ const path = require("path");
 const axios = require("axios");
 const express = require('express');
 const router = express.Router();
+const con = require("../db/connection");
+
 
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { render } = require("ejs");
+const { log } = require("console");
 
 const genAI = new GoogleGenerativeAI("AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // Set up middleware and configurations
 
 
+router.post("/save-pageids-rtext-ttext", (req, res) =>
+{
+    const { lab_id, pageids, texts_list, transformedText } = req.body;
+
+    const textjson = JSON.stringify(texts_list);
+    const sql = "UPDATE brainstorm1s SET pageids = ?, extractedTexts = ?, transformedText = ? WHERE id = ?";
+    con.query(sql, [pageids, textjson, transformedText, lab_id], (err, result) =>
+    {
+        if (err)
+            res.send(err);
+        else
+        {
+            res.send("successfully saved");
+        }
+    });
+
+})
+
+router.post("/save-note", (req, res) =>
+{
+    const { lab_id, htmlContent } = req.body;
+
+    console.log("lab id is", lab_id);
+    console.log("htmlcontent ", htmlContent);
+
+    const sql = "UPDATE brainstorm1s SET note = ? WHERE id = ?";
+    con.query(sql, [htmlContent, lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            console.error(err);
+            res.status(500).send("error");
+        }
+        else
+        {
+            res.send("saved successfully");
+        }
+    });
+});
+
+
+router.get("/create-lab/:pageId", (req, res) =>
+{
+    const pageId = req.params.pageId;
+    const user_id = req.session.user_id;
+
+    const sql = "INSERT INTO brainstorm1s (user_id, pageids) VALUES (?, ?)";
+    con.query(sql, [user_id, pageId], (err, result) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            const lab_id = result.insertId;
+            res.redirect(`/brainstorm1/lab/${lab_id}?pageids=${pageId}`);
+        }
+    });
+});
+
+router.get("/lab/:lab_id", (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+    res.render("brainstorm1/lab", { lab_id: lab_id });
+});
+
 router.get("/search", (req, res) =>
 {
     res.render("brainstorm1/search");
 });
 
-router.get("/lab", (req, res) =>
-{
-    res.render("brainstorm1/lab");
-});
-
 
 let list_selected_texts = [];
-
 router.post('/start-stream', express.json(), (req, res) =>
 {
     list_selected_texts = req.body.list_selected_texts || [];
@@ -45,7 +109,7 @@ router.get('/llm-stream', async (req, res) =>
 
     try
     {
-        const prompt = `relate the following texts: ${list_selected_texts}`;
+        const prompt = `relate the following texts: ${list_selected_texts}.`;
         console.log(prompt);
 
         const result = await model.generateContentStream(prompt);

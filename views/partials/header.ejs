@@ -4,10 +4,48 @@
         <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
             <span class="text-sm">Logo</span>
         </div>
-        <h1 class="text-xl font-semibold">Brainstorm AI</h1>
+        <a href="http://localhost:3000/home">
+            <h1 class="text-xl font-semibold">Brainstorm AI</h1>
+        </a>
     </div>
     <!-- User Icon Placeholder -->
-    <div class="w-8 h-8 border rounded-full flex items-center justify-center">
-        <i class="fa-solid fa-user fa-lg" style="color: #ffffff;"></i>
+    <div class="relative">
+        <div id="user-icon" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
+            <i class="fa-solid fa-user fa-lg" style="color: #ffffff;"></i>
+        </div>
+        <!-- Dropdown Menu -->
+        <div id="logout-menu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
+            <a href="/logout" class="block px-4 py-2 hover:bg-gray-200 rounded-t-lg">Logout</a>
+            <!-- <a id="try-axios" href="#" class="block px-4 py-2 hover:bg-gray-200 rounded-t-lg">try axios</a> -->
+        </div>
     </div>
 </header>
+
+<script>
+    // Get references to the user icon and logout menu
+    const userIcon = document.getElementById('user-icon');
+    const logoutMenu = document.getElementById('logout-menu');
+
+    // Toggle visibility of the logout menu
+    userIcon.addEventListener('click', () =>
+    {
+        logoutMenu.classList.toggle('hidden');
+    });
+
+</script>
+
+<!-- Axios CDN -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<!-- <script>
+    document.getElementById("try-axios").addEventListener("click", () =>
+    {
+        axios.post("/try-axios", { var1: 1, var2: "<p>cat</p>" }).then((result) =>
+        {
+            console.log(result);
+        }).catch((err) =>
+        {
+            console.error(err);
+        });
+    });
+</script> -->

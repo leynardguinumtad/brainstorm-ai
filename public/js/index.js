@@ -1,12 +1,6 @@
 let list_selected_texts = []; // Ensure this array is populated before calling llm
 
 // ===========================================================================
-
-
-
-
-
-
 function displayTextInContainer(textList)
 {
   // Update the global list_selected_texts
@@ -66,6 +60,9 @@ function displayTextInContainer(textList)
 
   // Append the list to the container
   container.appendChild(list);
+
+
+
 }
 
 
@@ -109,6 +106,7 @@ async function llm()
 
     eventSource.onerror = function ()
     {
+      save_pageIds_rawText_transText();
       responseDiv.innerHTML += '<p><em>Error occurred while receiving the response.</em></p>';
       eventSource.close();
     };
@@ -317,6 +315,16 @@ function updateLink()
   );
 }
 
+
+function get_pageIds()
+{
+  return `${Object.values(dataNodes)
+    .map((d) => d.pageid)
+    .join("|")}`;
+}
+
+
+
 function validId(titel)
 {
   titel = titel
@@ -444,10 +452,15 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true)
                 addLink(titel, linkTitel, id);
               }
             }
+
+
+
           } else
           {
             d3.select(this).attr("target", "_blank");
           }
+
+
         });
 
       })
@@ -532,6 +545,8 @@ if (params.has("pageids"))
     )
     .then((data) =>
     {
+
+
       return Object.values(data.query.pages).map((d) => d.title);
     });
 } else if (params.has("pages"))
