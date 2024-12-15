@@ -9,6 +9,7 @@ exports.up = function (knex)
         table.increments("id").primary();
         table.integer("user_id").unsigned().notNullable();
         table.string("pageids").notNullable();
+        table.string("lab_name").notNullable();
         table.text("note").nullable();
         table.text("extractedTexts").nullable();
         table.text("transformedText").nullable();

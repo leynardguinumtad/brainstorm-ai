@@ -1,5 +1,6 @@
 const path = require("path");
 const axios = require("axios");
+const crypto = require('crypto');
 const express = require('express');
 const router = express.Router();
 const con = require("../db/connection");
@@ -56,13 +57,15 @@ router.post("/save-note", (req, res) =>
 });
 
 
-router.get("/create-lab/:pageId", (req, res) =>
+router.get("/create-lab/:pageId/:title", (req, res) =>
 {
     const pageId = req.params.pageId;
+    const title = req.params.title;
     const user_id = req.session.user_id;
+    const lab_name = `${title}-${crypto.randomInt(100, 1000)}`;
 
-    const sql = "INSERT INTO brainstorm1s (user_id, pageids) VALUES (?, ?)";
-    con.query(sql, [user_id, pageId], (err, result) =>
+    const sql = "INSERT INTO brainstorm1s (user_id, pageids, lab_name) VALUES (?, ?, ?)";
+    con.query(sql, [user_id, pageId, lab_name], (err, result) =>
     {
         if (err)
         {
