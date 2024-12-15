@@ -16,62 +16,196 @@
                     </a>
                 </div>
 
-                <!-- Most Read Section -->
                 <div>
-                    <h2 class="text-lg font-semibold mb-2">Most Read</h2>
-                    <hr class="border-gray-300 mb-4">
-
-                    <!-- Carousel Container -->
-                    <div class="relative">
-                        <div class="carousel flex overflow-hidden gap-4">
-                            <% if (articles.length> 0) { %>
-                                <% articles.forEach((article, index)=> { %>
-                                    <div
-                                        class="min-w-[30%] max-w-[30%] h-[250px] bg-white shadow-lg rounded-md flex p-4 snap-center">
-                                        <!-- Article Content -->
-                                        <div class="w-1/2 flex flex-col justify-between">
-                                            <div>
-                                                <!-- Full Title that wraps -->
-                                                <a href="/brainstorm1/create-lab/<%= article.pageId %>" target="_blank"
-                                                    class="hover:text-blue-500" rel="noopener noreferrer">
-                                                    <h3 class="text-lg font-semibold mb-2 break-words">
-                                                        <%= article.title %>
-                                                    </h3>
-                                                </a>
-                                                <!-- Description with truncation -->
-                                                <p
-                                                    class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-6">
-                                                    <%= article.description %>
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <!-- Article Image -->
-                                        <div class="w-1/2 flex-shrink-0">
-                                            <% if (article.image) { %>
-                                                <img src="<%= article.image %>" alt="<%= article.title %>"
-                                                    class="rounded-md object-cover w-full h-full">
-                                                <% } else {%>
-                                                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg/2048px-Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg.png"
-                                                        alt="<%= article.title %>"
-                                                        class="rounded-md object-cover w-full h-full">
-                                                    <% } %>
-
-                                        </div>
-                                    </div>
-
-                                    <% }); %>
-                                        <% } else { %>
-                                            <p>Sorry, no featured articles are available at the moment.</p>
-                                            <% } %>
+                    <!-- Most Read Section -->
+                    <div x-data="{ selectedTab: 'most_reads' }" class="lg:col-span-2 space-y-6">
+                        <!-- Toggle Buttons for Files and Results -->
+                        <div class="flex space-x-4 mb-4">
+                            <button @click="selectedTab = 'most_reads'" :class="selectedTab === 'most_reads' ? 'bg-blue-500 text-white' :
+                                            'bg-white text-blue-500 border border-blue-500'"
+                                class="px-4 py-2 rounded font-semibold focus:outline-none">
+                                Most Reads
+                            </button>
+                            <button @click="selectedTab = 'education'" :class="selectedTab === 'education' ? 'bg-blue-500 text-white' :
+                                            'bg-white text-blue-500 border border-blue-500'"
+                                class="px-4 py-2 rounded font-semibold focus:outline-none">
+                                Education
+                            </button>
+                            <button @click="selectedTab = 'business'" :class="selectedTab === 'business' ? 'bg-blue-500 text-white' :
+                                            'bg-white text-blue-500 border border-blue-500'"
+                                class="px-4 py-2 rounded font-semibold focus:outline-none">
+                                Business
+                            </button>
                         </div>
 
-                        <!-- Navigation Controls -->
-                        <button id="prev"
-                            class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&lt;</button>
-                        <button id="next"
-                            class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&gt;</button>
+                        <!-- Files Section -->
+                        <div x-show="selectedTab === 'most_reads'" class="space-y-4">
+                            <!-- Carousel Container -->
+                            <div class="relative">
+                                <div class="carousel flex overflow-hidden gap-4" data-carousel="most_reads">
+                                    <% if (most_read_articles.length> 0) { %>
+                                        <% most_read_articles.forEach((article)=> { %>
+                                            <div
+                                                class="min-w-[30%] max-w-[30%] h-[250px] bg-white shadow-lg rounded-md flex p-4 snap-center">
+                                                <!-- Article Content -->
+                                                <div class="w-1/2 flex flex-col justify-between">
+                                                    <div>
+                                                        <a href="/brainstorm1/create-lab/<%= article.pageId %>"
+                                                            target="_blank" class="hover:text-blue-500"
+                                                            rel="noopener noreferrer">
+                                                            <h3 class="text-lg font-semibold mb-2 break-words">
+                                                                <%= article.title %>
+                                                            </h3>
+                                                        </a>
+                                                        <p
+                                                            class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-6">
+                                                            <%= article.description %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!-- Article Image -->
+                                                <div class="w-1/2 flex-shrink-0">
+                                                    <% if (article.image) { %>
+                                                        <img src="<%= article.image %>" alt="<%= article.title %>"
+                                                            class="rounded-md object-cover w-full h-full">
+                                                        <% } else { %>
+                                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg/2048px-Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg.png"
+                                                                alt="<%= article.title %>"
+                                                                class="rounded-md object-cover w-full h-full">
+                                                            <% } %>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>Sorry, no featured articles are available at the moment.</p>
+                                                    <% } %>
+                                </div>
+                                <!-- Navigation Controls -->
+                                <button data-prev="most_reads"
+                                    class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&lt;</button>
+                                <button data-next="most_reads"
+                                    class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&gt;</button>
+                            </div>
+                        </div>
+
+                        <!-- Repeat similar blocks for Education and Business -->
+                        <div x-show="selectedTab === 'education'" class="space-y-4">
+                            <div class="relative">
+                                <div class="carousel flex overflow-hidden gap-4" data-carousel="education">
+                                    <% if (education.length> 0) { %>
+                                        <% education.forEach((article)=> { %>
+                                            <div
+                                                class="min-w-[30%] max-w-[30%] h-[250px] bg-white shadow-lg rounded-md flex p-4 snap-center">
+                                                <!-- Article Content -->
+                                                <div class="w-1/2 flex flex-col justify-between">
+                                                    <div>
+                                                        <a href="/brainstorm1/create-lab/<%= article.pageId %>"
+                                                            target="_blank" class="hover:text-blue-500"
+                                                            rel="noopener noreferrer">
+                                                            <h3 class="text-lg font-semibold mb-2 break-words">
+                                                                <%= article.title %>
+                                                            </h3>
+                                                        </a>
+                                                        <p
+                                                            class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-6">
+                                                            <%= article.description %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!-- Article Image -->
+                                                <div class="w-1/2 flex-shrink-0">
+                                                    <% if (article.image) { %>
+                                                        <img src="<%= article.image %>" alt="<%= article.title %>"
+                                                            class="rounded-md object-cover w-full h-full">
+                                                        <% } else { %>
+                                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg/2048px-Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg.png"
+                                                                alt="<%= article.title %>"
+                                                                class="rounded-md object-cover w-full h-full">
+                                                            <% } %>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>No education articles available.</p>
+                                                    <% } %>
+                                </div>
+                                <button data-prev="education"
+                                    class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&lt;</button>
+                                <button data-next="education"
+                                    class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&gt;</button>
+                            </div>
+                        </div>
+
+                        <div x-show="selectedTab === 'business'" class="space-y-4">
+                            <div class="relative">
+                                <div class="carousel flex overflow-hidden gap-4" data-carousel="business">
+                                    <% if (business.length> 0) { %>
+                                        <% business.forEach((article)=> { %>
+                                            <div
+                                                class="min-w-[30%] max-w-[30%] h-[250px] bg-white shadow-lg rounded-md flex p-4 snap-center">
+                                                <!-- Article Content -->
+                                                <div class="w-1/2 flex flex-col justify-between">
+                                                    <div>
+                                                        <a href="/brainstorm1/create-lab/<%= article.pageId %>"
+                                                            target="_blank" class="hover:text-blue-500"
+                                                            rel="noopener noreferrer">
+                                                            <h3 class="text-lg font-semibold mb-2 break-words">
+                                                                <%= article.title %>
+                                                            </h3>
+                                                        </a>
+                                                        <p
+                                                            class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-6">
+                                                            <%= article.description %>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <!-- Article Image -->
+                                                <div class="w-1/2 flex-shrink-0">
+                                                    <% if (article.image) { %>
+                                                        <img src="<%= article.image %>" alt="<%= article.title %>"
+                                                            class="rounded-md object-cover w-full h-full">
+                                                        <% } else { %>
+                                                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg/2048px-Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg.png"
+                                                                alt="<%= article.title %>"
+                                                                class="rounded-md object-cover w-full h-full">
+                                                            <% } %>
+                                                </div>
+                                            </div>
+                                            <% }); %>
+                                                <% } else { %>
+                                                    <p>No business articles available.</p>
+                                                    <% } %>
+                                </div>
+                                <button data-prev="business"
+                                    class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&lt;</button>
+                                <button data-next="business"
+                                    class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&gt;</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Updated Carousel Script -->
+                <script>
+                    document.addEventListener('DOMContentLoaded', () =>
+                    {
+                        const buttons = document.querySelectorAll('[data-prev], [data-next]');
+                        buttons.forEach(button =>
+                        {
+                            button.addEventListener('click', () =>
+                            {
+                                const group = button.getAttribute('data-prev') || button.getAttribute('data-next');
+                                const carousel = document.querySelector(`.carousel[data-carousel="${group}"]`);
+                                const cardWidth = carousel.querySelector('div').offsetWidth;
+                                const gap = 16; // Adjust if you change the gap between cards
+                                const direction = button.hasAttribute('data-next') ? 1 : -1;
+
+                                carousel.scrollBy({ left: direction * (cardWidth * 3 + gap * 3), behavior: 'smooth' });
+                            });
+                        });
+                    });
+                </script>
+
 
                 <!-- Recent Section -->
                 <div class="mt-8">
@@ -81,46 +215,9 @@
                 </div>
             </main>
 
-            <!-- Carousel Styles -->
-            <style>
-                .carousel {
-                    scroll-behavior: smooth;
-                    display: flex;
-                    overflow-x: hidden;
-                }
 
-                .line-clamp-6 {
-                    display: -webkit-box;
-                    -webkit-line-clamp: 6;
-                    -webkit-box-orient: vertical;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                }
-            </style>
 
-            <!-- Carousel Script -->
-            <script>
-                document.addEventListener('DOMContentLoaded', () =>
-                {
-                    const carousel = document.querySelector('.carousel');
-                    const next = document.getElementById('next');
-                    const prev = document.getElementById('prev');
 
-                    // Width of each card and spacing (adjust as necessary)
-                    const cardWidth = carousel.querySelector('div').offsetWidth;
-                    const gap = 16; // Adjust if you change the gap between cards
-
-                    next.addEventListener('click', () =>
-                    {
-                        carousel.scrollBy({ left: cardWidth * 3 + gap * 3, behavior: 'smooth' });
-                    });
-
-                    prev.addEventListener('click', () =>
-                    {
-                        carousel.scrollBy({ left: -(cardWidth * 3 + gap * 3), behavior: 'smooth' });
-                    });
-                });
-            </script>
     </body>
 
 </html>

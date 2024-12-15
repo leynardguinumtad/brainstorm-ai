@@ -1,0 +1,185 @@
+<div x-data="{ selectedTab: 'most_reads' }" class="lg:col-span-2 space-y-6">
+    <!-- Toggle Buttons for Files and Results -->
+    <div class="flex space-x-4 mb-4">
+        <button @click="selectedTab = 'most_reads'" :class="selectedTab === 'most_reads' ? 'bg-blue-500 text-white' :
+                            'bg-white text-blue-500 border border-blue-500'"
+            class="px-4 py-2 rounded font-semibold focus:outline-none">
+            Most Reads
+        </button>
+        <button @click="selectedTab = 'education'" :class="selectedTab === 'education' ? 'bg-blue-500 text-white' :
+                            'bg-white text-blue-500 border border-blue-500'"
+            class="px-4 py-2 rounded font-semibold focus:outline-none">
+            Education
+        </button>
+
+        <button @click="selectedTab = 'business'" :class="selectedTab === 'business' ? 'bg-blue-500 text-white' :
+                            'bg-white text-blue-500 border border-blue-500'"
+            class="px-4 py-2 rounded font-semibold focus:outline-none">
+            Business
+        </button>
+
+    </div>
+
+
+    <!-- Files Section -->
+    <div x-show="selectedTab === 'most_reads'" class="space-y-4">
+        <!-- Carousel Container -->
+        <div class="relative">
+            <div class="carousel flex overflow-hidden gap-4">
+                <% if (most_read_articles.length> 0) { %>
+                    <% most_read_articles.forEach((article, index)=> { %>
+                        <div
+                            class="min-w-[30%] max-w-[30%] h-[250px] bg-white shadow-lg rounded-md flex p-4 snap-center">
+                            <!-- Article Content -->
+                            <div class="w-1/2 flex flex-col justify-between">
+                                <div>
+                                    <!-- Full Title that wraps -->
+                                    <a href="/brainstorm1/create-lab/<%= article.pageId %>" target="_blank"
+                                        class="hover:text-blue-500" rel="noopener noreferrer">
+                                        <h3 class="text-lg font-semibold mb-2 break-words">
+                                            <%= article.title %>
+                                        </h3>
+                                    </a>
+                                    <!-- Description with truncation -->
+                                    <p class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-6">
+                                        <%= article.description %>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Article Image -->
+                            <div class="w-1/2 flex-shrink-0">
+                                <% if (article.image) { %>
+                                    <img src="<%= article.image %>" alt="<%= article.title %>"
+                                        class="rounded-md object-cover w-full h-full">
+                                    <% } else {%>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg/2048px-Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg.png"
+                                            alt="<%= article.title %>" class="rounded-md object-cover w-full h-full">
+                                        <% } %>
+
+                            </div>
+                        </div>
+
+                        <% }); %>
+                            <% } else { %>
+                                <p>Sorry, no featured articles are available at the moment.</p>
+                                <% } %>
+            </div>
+
+            <!-- Navigation Controls -->
+            <button id="prev"
+                class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&lt;</button>
+            <button id="next"
+                class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&gt;</button>
+        </div>
+
+
+    </div>
+    <div x-show="selectedTab === 'education'" class="space-y-4">
+        <!-- Carousel Container -->
+        <div class="relative">
+            <div class="carousel flex overflow-hidden gap-4">
+                <% if (education.length> 0) { %>
+                    <% education.forEach((article, index)=> { %>
+                        <div
+                            class="min-w-[30%] max-w-[30%] h-[250px] bg-white shadow-lg rounded-md flex p-4 snap-center">
+                            <!-- Article Content -->
+                            <div class="w-1/2 flex flex-col justify-between">
+                                <div>
+                                    <!-- Full Title that wraps -->
+                                    <a href="/brainstorm1/create-lab/<%= article.pageId %>" target="_blank"
+                                        class="hover:text-blue-500" rel="noopener noreferrer">
+                                        <h3 class="text-lg font-semibold mb-2 break-words">
+                                            <%= article.title %>
+                                        </h3>
+                                    </a>
+                                    <!-- Description with truncation -->
+                                    <p class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-6">
+                                        <%= article.description %>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Article Image -->
+                            <div class="w-1/2 flex-shrink-0">
+                                <% if (article.image) { %>
+                                    <img src="<%= article.image %>" alt="<%= article.title %>"
+                                        class="rounded-md object-cover w-full h-full">
+                                    <% } else {%>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg/2048px-Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg.png"
+                                            alt="<%= article.title %>" class="rounded-md object-cover w-full h-full">
+                                        <% } %>
+
+                            </div>
+                        </div>
+
+                        <% }); %>
+                            <% } else { %>
+                                <p>Sorry, no featured articles are available at the moment.</p>
+                                <% } %>
+            </div>
+
+            <!-- Navigation Controls -->
+            <button id="prev"
+                class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&lt;</button>
+            <button id="next"
+                class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&gt;</button>
+        </div>
+
+
+    </div>
+    <div x-show="selectedTab === 'business'" class="space-y-4">
+        <!-- Carousel Container -->
+        <div class="relative">
+            <div class="carousel flex overflow-hidden gap-4">
+                <% if (business.length> 0) { %>
+                    <% business.forEach((article, index)=> { %>
+                        <div
+                            class="min-w-[30%] max-w-[30%] h-[250px] bg-white shadow-lg rounded-md flex p-4 snap-center">
+                            <!-- Article Content -->
+                            <div class="w-1/2 flex flex-col justify-between">
+                                <div>
+                                    <!-- Full Title that wraps -->
+                                    <a href="/brainstorm1/create-lab/<%= article.pageId %>" target="_blank"
+                                        class="hover:text-blue-500" rel="noopener noreferrer">
+                                        <h3 class="text-lg font-semibold mb-2 break-words">
+                                            <%= article.title %>
+                                        </h3>
+                                    </a>
+                                    <!-- Description with truncation -->
+                                    <p class="text-sm text-gray-600 overflow-hidden text-ellipsis line-clamp-6">
+                                        <%= article.description %>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Article Image -->
+                            <div class="w-1/2 flex-shrink-0">
+                                <% if (article.image) { %>
+                                    <img src="<%= article.image %>" alt="<%= article.title %>"
+                                        class="rounded-md object-cover w-full h-full">
+                                    <% } else {%>
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg/2048px-Wikipedia_logo_outline_with_square_background_%28needed_for_interfaces%29.svg.png"
+                                            alt="<%= article.title %>" class="rounded-md object-cover w-full h-full">
+                                        <% } %>
+
+                            </div>
+                        </div>
+
+                        <% }); %>
+                            <% } else { %>
+                                <p>Sorry, no featured articles are available at the moment.</p>
+                                <% } %>
+            </div>
+
+            <!-- Navigation Controls -->
+            <button id="prev"
+                class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&lt;</button>
+            <button id="next"
+                class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-gray-800 text-white px-3 py-1 rounded-full hover:bg-gray-700">&gt;</button>
+        </div>
+
+
+    </div>
+
+
+
+
+</div>
