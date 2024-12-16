@@ -33,8 +33,25 @@ router.post("/login", (req, res) =>
             {
                 req.session.user_id = result[0].id;
                 console.log(`user id: ${req.session.user_id}`);
-                req.flash("success", "Login Successful");
-                res.redirect("/home");
+
+
+                const sql2 = "SELECT * FROM users WHERE id = ?";
+                con.query(sql2, [req.session.user_id], (err2, result2) =>
+                {
+                    if (err2)
+                    {
+                        req.flash("error", "Account not found");
+                        console.log("not found");
+                        res.redirect("/auth/login");
+                    }
+                    else
+                    {
+                        //get the name
+                        req.session.name = result2[0].name;
+                        req.flash("success", "Login Successfully");
+                        res.redirect("/home");
+                    }
+                });
             }
 
         }

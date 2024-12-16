@@ -10,12 +10,16 @@
     </div>
 
     <!-- User Icon Placeholder -->
-    <div class="relative flex space-x-4">
+    <div class="relative flex space-x-4 items-center">
+        <div id="home"
+            class="w-auto h-8 border rounded-full flex items-center justify-center cursor-pointer text-white whitespace-nowrap px-3">
+            <%= name %>
+        </div>
         <div id="home" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
             <i class="fa-solid fa-house" onclick="window.location.href='http://localhost:3000/home'"></i>
         </div>
         <div id="manage-lab" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
-            <i class="fa-solid fa-list-ul " onclick="window.location.href='http://localhost:3000/manage'"></i>
+            <i class="fa-solid fa-list-ul" onclick="window.location.href='http://localhost:3000/manage'"></i>
         </div>
         <div id="user-icon" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
             <i class="fa-solid fa-user"></i>
@@ -24,6 +28,7 @@
             <a href="/logout" class="block px-4 py-2 hover:bg-gray-200 rounded-t-lg">Logout</a>
         </div>
     </div>
+
 
 </header>
 

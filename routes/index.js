@@ -97,6 +97,7 @@ router.get("/home", async (req, res) =>
                     education: medicineArticles,
                     business: businessArticles,
                     history: results,
+                    name: req.session.name,
                 });
             }
 
@@ -122,7 +123,7 @@ router.get("/manage", (req, res) =>
         } else
         {
             res.render("manage", {
-                history: results,
+                history: results, name: req.session.name,
             });
         }
 

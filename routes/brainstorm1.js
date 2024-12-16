@@ -229,14 +229,14 @@ router.get("/lab/:lab_id", (req, res) =>
             console.log
 
 
-            res.render("brainstorm1/lab", { lab_id: lab_id, history_data: history_data });
+            res.render("brainstorm1/lab", { lab_id: lab_id, history_data: history_data, name: req.session.name });
         }
     });
 });
 
 router.get("/search", (req, res) =>
 {
-    res.render("brainstorm1/search");
+    res.render("brainstorm1/search", { name: req.session.name });
 });
 
 
