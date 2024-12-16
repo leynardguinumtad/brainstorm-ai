@@ -84,7 +84,6 @@ router.get("/home", async (req, res) =>
             fetchArticlesByCategory("Business"),
         ]);
 
-        var history;
         const sql = "SELECT * FROM brainstorm1s WHERE user_id = ?";
         con.query(sql, [req.session.user_id], (err, results) =>
         {
@@ -109,6 +108,25 @@ router.get("/home", async (req, res) =>
         console.log(error);
         res.status(400).send(` error ${error}`);
     }
+});
+
+
+router.get("/manage", (req, res) =>
+{
+    const sql = "SELECT * FROM brainstorm1s WHERE user_id = ?";
+    con.query(sql, [req.session.user_id], (err, results) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        } else
+        {
+            res.render("manage", {
+                history: results,
+            });
+        }
+
+    });
 });
 
 

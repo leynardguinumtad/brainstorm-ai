@@ -1,24 +1,30 @@
-<header class="bg-blue-500 text-white p-4 flex items-center justify-between w-full fixed top-0 z-50">
+<header class="bg-blue-600 text-white p-4 flex items-center justify-between w-full fixed top-0 z-50">
     <div class="flex items-center space-x-2">
         <!-- Logo Placeholder -->
-        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-            <span class="text-sm">Logo</span>
+        <div class="w-10 h-10 flex items-center justify-center">
+            <img src="/img/logo-bsai-final.png" alt="">
         </div>
+
         <a href="http://localhost:3000/home">
-            <h1 class="text-xl font-semibold">Brainstorm AI</h1>
+            <h1 class="text-2xl font-bold text-white">Brainstorm AI</h1>
         </a>
     </div>
     <!-- User Icon Placeholder -->
-    <div class="relative">
-        <div id="user-icon" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
-            <i class="fa-solid fa-user fa-lg" style="color: #ffffff;"></i>
+    <div class="relative flex space-x-4">
+        <div id="home" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
+            <i class="fa-solid fa-house"></i>
         </div>
-        <!-- Dropdown Menu -->
-        <div id="logout-menu" class="hidden absolute right-0 mt-2 w-32 bg-white text-black rounded-lg shadow-lg">
+        <div id="manage-lab" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
+            <i class="fa-solid fa-list-ul"></i>
+        </div>
+        <div id="user-icon" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        <div id="logout-menu" class="hidden absolute mt-10 right-0 w-32 bg-white text-black rounded-lg shadow-lg">
             <a href="/logout" class="block px-4 py-2 hover:bg-gray-200 rounded-t-lg">Logout</a>
-            <!-- <a id="try-axios" href="#" class="block px-4 py-2 hover:bg-gray-200 rounded-t-lg">try axios</a> -->
         </div>
     </div>
+
 </header>
 
 <script>
@@ -36,4 +42,3 @@
 
 <!-- Axios CDN -->
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-

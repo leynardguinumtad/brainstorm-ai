@@ -8,6 +8,8 @@
 <!-- FontAwesome CDN -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+<!-- Fontawesome CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script src="/js/Vec2.js"></script>
@@ -16,7 +18,7 @@
     href="//en.wikipedia.org/w/load.php?debug=false&lang=en&modules=mediawiki.legacy.commonPrint,shared|skins.vector.styles&only=styles&skin=vector&*">
 <title>BrainStorm AI | <%= title %>
 
-    
+
 
 </title>
 
@@ -101,5 +103,39 @@
 
     #deleteButton:hover {
         background-color: #c9302c;
+    }
+
+
+    /* Custom color scheme */
+    :root {
+        --blue-color: #106EBE;
+        --mint-color: #0FFCBE;
+        --light-gray: #F7FAFC;
+        --dark-gray: #2D3748;
+    }
+
+    /* Applying custom colors */
+    .bg-blue {
+        background-color: var(--blue-color);
+    }
+
+    .bg-mint {
+        background-color: var(--mint-color);
+    }
+
+    .text-blue {
+        color: var(--blue-color);
+    }
+
+    .text-mint {
+        color: var(--mint-color);
+    }
+
+    .text-dark {
+        color: var(--dark-gray);
+    }
+
+    .bg-light-gray {
+        background-color: var(--light-gray);
     }
 </style>

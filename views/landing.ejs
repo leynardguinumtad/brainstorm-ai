@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,12 +16,29 @@
         }
 
         /* Applying custom colors */
-        .bg-blue { background-color: var(--blue-color); }
-        .bg-mint { background-color: var(--mint-color); }
-        .text-blue { color: var(--blue-color); }
-        .text-mint { color: var(--mint-color); }
-        .text-dark { color: var(--dark-gray); }
-        .bg-light-gray { background-color: var(--light-gray); }
+        .bg-blue {
+            background-color: var(--blue-color);
+        }
+
+        .bg-mint {
+            background-color: var(--mint-color);
+        }
+
+        .text-blue {
+            color: var(--blue-color);
+        }
+
+        .text-mint {
+            color: var(--mint-color);
+        }
+
+        .text-dark {
+            color: var(--dark-gray);
+        }
+
+        .bg-light-gray {
+            background-color: var(--light-gray);
+        }
 
         /* Hide header when scrolling down */
         .header-hidden {
@@ -35,17 +53,26 @@
         }
     </style>
 </head>
+
 <body class="bg-light-gray text-dark">
     <header id="header" class="bg-blue text-white py-4 fixed top-0 left-0 w-full z-50 header-visible">
         <div class="container mx-auto flex justify-between items-center px-4">
-            <h1 class="text-2xl font-bold">Brainstorm AI</h1>
+            <div class="flex items-center space-x-2">
+                <!-- Logo Placeholder -->
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <img src="/img/logo-bsai-final.png" alt="">
+                </div>
+
+                <h1 class="text-2xl font-bold">Brainstorm AI</h1>
+            </div>
             <nav>
                 <ul class="hidden md:flex space-x-4">
                     <li><a href="#services" class="hover:underline">Services</a></li>
                     <li><a href="#about" class="hover:underline">About</a></li>
                     <li><a href="#contact" class="hover:underline">Contact</a></li>
                     <li><a href="/auth/login" class="bg-white text-blue px-4 py-2 rounded hover:bg-mint">Login</a></li>
-                    <li><a href="/auth/register" class="bg-mint text-blue px-4 py-2 rounded hover:bg-blue">Register</a></li>
+                    <li><a href="/auth/register" class="bg-mint text-blue px-4 py-2 rounded hover:bg-blue">Register</a>
+                    </li>
                 </ul>
                 <div class="md:hidden">
                     <button id="menu-toggle" class="text-white">Menu</button>
@@ -65,7 +92,8 @@
         <section class="bg-white py-20 px-4 h-screen flex items-center justify-center">
             <div class="container mx-auto text-center">
                 <h2 class="text-4xl font-bold mb-6 text-blue">Unleash Your Creativity</h2>
-                <p class="text-lg text-gray-600 mb-8">Discover AI-driven solutions to help you brainstorm ideas, innovate, and grow.</p>
+                <p class="text-lg text-gray-600 mb-8">Discover AI-driven solutions to help you brainstorm ideas,
+                    innovate, and grow.</p>
                 <a href="#services" class="bg-blue text-white px-6 py-3 rounded hover:bg-mint">Get Started</a>
             </div>
         </section>
@@ -84,7 +112,8 @@
                     </div>
                     <div class="bg-white p-6 rounded shadow">
                         <h4 class="text-xl font-bold mb-4 text-blue">Strategy Planning</h4>
-                        <p class="text-gray-600">Leverage AI to build effective strategies for your business or projects.</p>
+                        <p class="text-gray-600">Leverage AI to build effective strategies for your business or
+                            projects.</p>
                     </div>
                 </div>
             </div>
@@ -93,7 +122,9 @@
         <section id="about" class="py-20 px-4 h-screen bg-mint flex items-center justify-center">
             <div class="container mx-auto text-center">
                 <h3 class="text-3xl font-bold mb-6 text-blue">About Us</h3>
-                <p class="text-lg text-gray-800">At Brainstorm AI, we believe in the power of technology to unlock human potential. Our mission is to provide intuitive AI tools that make brainstorming and innovation accessible to everyone.</p>
+                <p class="text-lg text-gray-800">At Brainstorm AI, we believe in the power of technology to unlock human
+                    potential. Our mission is to provide intuitive AI tools that make brainstorming and innovation
+                    accessible to everyone.</p>
             </div>
         </section>
 
@@ -118,18 +149,22 @@
         const header = document.getElementById('header');
         let lastScrollTop = 0;
 
-        menuToggle.addEventListener('click', () => {
+        menuToggle.addEventListener('click', () =>
+        {
             mobileMenu.classList.toggle('hidden');
         });
 
-        window.addEventListener('scroll', function () {
+        window.addEventListener('scroll', function ()
+        {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
-            if (scrollTop > lastScrollTop) {
+            if (scrollTop > lastScrollTop)
+            {
                 // Scrolling down
                 header.classList.remove('header-visible');
                 header.classList.add('header-hidden');
-            } else {
+            } else
+            {
                 // Scrolling up
                 header.classList.remove('header-hidden');
                 header.classList.add('header-visible');
@@ -139,4 +174,5 @@
         });
     </script>
 </body>
+
 </html>

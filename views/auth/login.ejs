@@ -20,26 +20,50 @@
                     --light-gray: #F7FAFC;
                     --dark-gray: #2D3748;
                 }
-        
+
                 /* Applying custom colors */
-                .bg-blue { background-color: var(--blue-color); }
-                .bg-mint { background-color: var(--mint-color); }
-                .text-blue { color: var(--blue-color); }
-                .text-mint { color: var(--mint-color); }
-                .text-dark { color: var(--dark-gray); }
-                .bg-light-gray { background-color: var(--light-gray); }
-        
+                .bg-blue {
+                    background-color: var(--blue-color);
+                }
+
+                .bg-mint {
+                    background-color: var(--mint-color);
+                }
+
+                .text-blue {
+                    color: var(--blue-color);
+                }
+
+                .text-mint {
+                    color: var(--mint-color);
+                }
+
+                .text-dark {
+                    color: var(--dark-gray);
+                }
+
+                .bg-light-gray {
+                    background-color: var(--light-gray);
+                }
             </style>
         </head>
 
         <body class="bg-gray-100 text-gray-800">
             <header class="bg-blue-600 text-white py-4">
                 <div class="container mx-auto flex justify-between items-center px-4">
-                    <h1 class="text-2xl font-bold">Brainstorm AI</h1>
+                    <div class="flex items-center space-x-2">
+                        <!-- Logo Placeholder -->
+                        <div class="w-10 h-10 flex items-center justify-center">
+                            <img src="/img/logo-bsai-final.png" alt="">
+                        </div>
+
+                        <h1 class="text-2xl font-bold">Brainstorm AI</h1>
+                    </div>
                     <nav>
                         <ul class="hidden md:flex space-x-4">
                             <li><a href="/" class="bg-white text-blue px-4 py-2 rounded hover:underline">Home</a></li>
-                            <li><a href="/auth/register" class="bg-mint text-white px-4 py-2 rounded hover:underline">Register</a></li>
+                            <li><a href="/auth/register"
+                                    class="bg-mint text-white px-4 py-2 rounded hover:underline">Register</a></li>
                         </ul>
                         <div class="md:hidden">
                             <button id="menu-toggle" class="text-white">Menu</button>
@@ -74,17 +98,18 @@
                 </div>
             </main>
 
-            <footer class="bg-blue-600 text-white py-4">
+            <!-- <footer class="bg-blue-600 text-white py-4">
                 <div class="container mx-auto text-center px-4">
                     <p>&copy; 2024 Brainstorm AI. All rights reserved.</p>
                 </div>
-            </footer>
+            </footer> -->
 
             <script>
                 const menuToggle = document.getElementById('menu-toggle');
                 const mobileMenu = document.getElementById('mobile-menu');
 
-                menuToggle.addEventListener('click', () => {
+                menuToggle.addEventListener('click', () =>
+                {
                     mobileMenu.classList.toggle('hidden');
                 });
             </script>

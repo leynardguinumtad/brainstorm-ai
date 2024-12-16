@@ -10,7 +10,7 @@
                 <!-- Brainstorm Button -->
                 <div class="flex justify-end mb-4">
                     <a href="/brainstorm1/search">
-                        <button class="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+                        <button class="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700">
                             Brainstorm +
                         </button>
                     </a>
@@ -219,7 +219,7 @@
                             <div class="bg-white p-4 rounded-lg shadow-md flex flex-col h-full relative">
                                 <!-- Background section for title -->
                                 <div
-                                    class="absolute top-0 left-0 right-0 bg-blue-400 rounded-t-lg py-2 px-4 flex justify-between items-center">
+                                    class="absolute top-0 left-0 right-0 bg-blue-600 rounded-t-lg py-2 px-4 flex justify-between items-center">
                                     <!-- Title -->
                                     <p class="text-sm font-semibold text-white mb-0"><em>
                                             <a
@@ -243,9 +243,9 @@
 
                                         <!-- Dropdown Menu -->
                                         <div id="dropdown-<%= lab_project.id %>"
-                                            class="dropdown-menu absolute hidden bg-white shadow-md rounded-lg mt-2 right-0 w-40">
-                                            <ul class="text-sm text-gray-700">
-                                                <li><button
+                                            class="dropdown-menu absolute hidden bg-white shadow-md rounded-lg mt-2 right-0 w-40 z-50">
+                                            <ul class="text-sm text-gray-700 p-5">
+                                                <li><button class="hover:text-blue-600"
                                                         onclick="window.location.href='/brainstorm1/download-pdf/<%= lab_project.id %>'">Download</button>
                                                 </li>
                                             </ul>
@@ -276,12 +276,10 @@
                         }
                     </script>
 
-
-
                     <!-- View More Link -->
                     <% if (history.length> 8) { %>
                         <div class="mt-4 text-center">
-                            <a href="#" class="text-blue-600 hover:text-blue-800 font-semibold">View More</a>
+                            <a href="/manage" class="text-blue-600 hover:text-blue-800 font-semibold">View More</a>
                         </div>
                         <% } %>
                 </div>
