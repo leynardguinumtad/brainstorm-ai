@@ -108,7 +108,6 @@ async function llm()
     eventSource.onerror = function ()
     {
       save_pageIds_rawText_transText();
-      responseDiv.innerHTML += '<p><em>Error occurred while receiving the response.</em></p>';
       eventSource.close();
     };
   } catch (error)
