@@ -5,8 +5,6 @@ const express = require('express');
 const router = express.Router();
 const con = require("../db/connection");
 
-
-
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { render } = require("ejs");
 const { log } = require("console");
@@ -14,7 +12,6 @@ const { log } = require("console");
 const genAI = new GoogleGenerativeAI("AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // Set up middleware and configurations
-
 
 router.post("/save-pageids-rtext-ttext", (req, res) =>
 {
@@ -82,7 +79,37 @@ router.get("/create-lab/:pageId/:title", (req, res) =>
 router.get("/lab/:lab_id", (req, res) =>
 {
     const lab_id = req.params.lab_id;
-    res.render("brainstorm1/lab", { lab_id: lab_id });
+
+    const sql = "SELECT * FROM brainstorm1s WHERE id = ?";
+    con.query(sql, [lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            // const note = result[0].note;
+            // const extractedTexts = JSON.parse(result[0].extractedTexts);
+            // const transformedText = result[0].transformedText;
+            // console.log(note);
+            // console.log(extractedTexts);
+            // console.log(transformedText);
+
+            const history = {
+                note: result[0].note,
+                extractedTexts: JSON.parse(result[0].extractedTexts),
+                transformedText: result[0].transformedText,
+            }
+
+            console.log(history);
+
+
+            res.render("brainstorm1/lab", { lab_id: lab_id, history: history });
+        }
+    });
+
+
 });
 
 router.get("/search", (req, res) =>

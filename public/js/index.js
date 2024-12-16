@@ -1,4 +1,4 @@
-let list_selected_texts = []; // Ensure this array is populated before calling llm
+// let list_selected_texts = []; 
 
 // ===========================================================================
 function displayTextInContainer(textList)
@@ -415,7 +415,7 @@ function loadWikiPage(titel, scrollTo, eraseforwardStack = true)
 
                 if (sentenceWithLink)
                 {
-                  list_selected_texts.push(sentenceWithLink.trim());
+                  list_selected_texts.push(sentenceWithLink.replace(/\[\d+\]/g, '').trim());
                   console.log(list_selected_texts);
                   //display in the container
                   displayTextInContainer(list_selected_texts);

@@ -3,7 +3,7 @@
 
 <%- include('partials/head.ejs', {title: "Home" }) %>
 
-    <body class="bg-gray-100">
+    <body class="bg-gray-75">
         <%- include('partials/header.ejs') %>
             <!-- Main Content -->
             <main class="px-24 mt-24">
@@ -211,7 +211,25 @@
                 <div class="mt-8">
                     <h2 class="text-lg font-semibold mb-2">Recent</h2>
                     <hr class="border-gray-300 mb-4">
-                    <div class="bg-gray-300 rounded-md h-32"></div>
+                    <div>
+                        <% history.forEach(lab_project=> { %>
+                            <div>
+                                <p><em>
+                                        <a
+                                            href="/brainstorm1/lab/<%= lab_project.id%>?pageids=<%= lab_project.pageids %>">
+                                            <%= lab_project.lab_name %>
+                                        </a>
+
+                                    </em></p>
+                                <p>
+                                    <%= lab_project.transformedText %>
+                                </p>
+
+                                <p>date created: <%= lab_project.created_at %>
+                                </p>
+                            </div>
+                            <% }) %>
+                    </div>
                 </div>
             </main>
 

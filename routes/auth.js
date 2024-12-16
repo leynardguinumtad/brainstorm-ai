@@ -25,17 +25,18 @@ router.post("/login", (req, res) =>
         {
             if (!result)
             {
+                req.flash("error", "Account not found");
+                console.log("not found");
+                res.redirect("/auth/login");
+            }
+            else
+            {
                 req.session.user_id = result[0].id;
                 console.log(`user id: ${req.session.user_id}`);
                 req.flash("success", "Login Successful");
                 res.redirect("/home");
             }
-            else
-            {
-                req.flash("error", "Account not found");
-                console.log("not found");
-                res.redirect("/auth/login");
-            }
+
         }
     });
 });

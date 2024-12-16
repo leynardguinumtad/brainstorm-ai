@@ -13,7 +13,7 @@ exports.up = function (knex)
         table.text("note").nullable();
         table.text("extractedTexts").nullable();
         table.text("transformedText").nullable();
-        table.timestamps();
+        table.timestamp("created_at").defaultTo(knex.fn.now());
 
 
         table.foreign("user_id").references("id").inTable("users").onDelete("CASCADE");

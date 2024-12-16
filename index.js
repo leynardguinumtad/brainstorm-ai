@@ -41,7 +41,12 @@ app.use((req, res, next) =>
     next();
 });
 
-//Routes
+//we will define a route level middleware to
+//redirect the users to login or registration page if there is no session variable.
+
+
+
+//Routes - with route level middleware
 app.use("/", indexRouter);
 app.use("/brainstorm1", brainstorm1Router);
 app.use("/auth", authRouter);
