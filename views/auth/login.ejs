@@ -1,118 +1,118 @@
-<% if (error) { %>
-    <div class="alert alert-success">
-        <%= error %>
-    </div>
+<!DOCTYPE html>
+<html lang="en">
 
-    <% } %>
-        <!DOCTYPE html>
-        <html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Brainstorm AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom color scheme */
+        :root {
+            --blue-color: #106EBE;
+            --mint-color: #0FFCBE;
+            --light-gray: #F7FAFC;
+            --dark-gray: #2D3748;
+        }
 
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Login - Brainstorm AI</title>
-            <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-            <style>
-                /* Custom color scheme */
-                :root {
-                    --blue-color: #106EBE;
-                    --mint-color: #0FFCBE;
-                    --light-gray: #F7FAFC;
-                    --dark-gray: #2D3748;
-                }
+        /* Applying custom colors */
+        .bg-blue {
+            background-color: var(--blue-color);
+        }
 
-                /* Applying custom colors */
-                .bg-blue {
-                    background-color: var(--blue-color);
-                }
+        .bg-mint {
+            background-color: var(--mint-color);
+        }
 
-                .bg-mint {
-                    background-color: var(--mint-color);
-                }
+        .text-blue {
+            color: var(--blue-color);
+        }
 
-                .text-blue {
-                    color: var(--blue-color);
-                }
+        .text-mint {
+            color: var(--mint-color);
+        }
 
-                .text-mint {
-                    color: var(--mint-color);
-                }
+        .text-dark {
+            color: var(--dark-gray);
+        }
 
-                .text-dark {
-                    color: var(--dark-gray);
-                }
+        .bg-light-gray {
+            background-color: var(--light-gray);
+        }
+    </style>
+</head>
 
-                .bg-light-gray {
-                    background-color: var(--light-gray);
-                }
-            </style>
-        </head>
-
-        <body class="bg-gray-100 text-gray-800">
-            <header class="bg-blue-600 text-white py-4">
-                <div class="container mx-auto flex justify-between items-center px-4">
-                    <div class="flex items-center space-x-2">
-                        <!-- Logo Placeholder -->
-                        <div class="w-10 h-10 flex items-center justify-center">
-                            <img src="/img/logo-bsai-final.png" alt="">
-                        </div>
-
-                        <h1 class="text-2xl font-bold">Brainstorm AI</h1>
-                    </div>
-                    <nav>
-                        <ul class="hidden md:flex space-x-4">
-                            <li><a href="/" class="bg-white text-blue px-4 py-2 rounded hover:underline">Home</a></li>
-                            <li><a href="/auth/register"
-                                    class="bg-mint text-white px-4 py-2 rounded hover:underline">Register</a></li>
-                        </ul>
-                        <div class="md:hidden">
-                            <button id="menu-toggle" class="text-white">Menu</button>
-                        </div>
-                    </nav>
+<body class="bg-gray-100 text-gray-800">
+    <header class="bg-blue-600 text-white py-4">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <div class="flex items-center space-x-2">
+                <!-- Logo Placeholder -->
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <img src="/img/logo-bsai-final.png" alt="">
                 </div>
-                <ul id="mobile-menu" class="hidden flex-col space-y-2 text-center bg-blue-700 py-4 md:hidden">
-                    <li><a href="/" class="block text-white hover:underline">Home</a></li>
-                    <li><a href="#" class="block text-white hover:underline">Register</a></li>
+
+                <h1 class="text-2xl font-bold">Brainstorm AI</h1>
+            </div>
+            <nav>
+                <ul class="hidden md:flex space-x-4">
+                    <li><a href="/" class="bg-white text-blue px-4 py-2 rounded hover:underline">Home</a></li>
+                    <li><a href="/auth/register"
+                            class="bg-mint text-white px-4 py-2 rounded hover:underline">Register</a></li>
                 </ul>
-            </header>
-
-            <main class="py-20 px-4">
-                <div class="container mx-auto max-w-md bg-white p-8 rounded shadow">
-                    <h2 class="text-2xl font-bold mb-6 text-center">Welcome Back</h2>
-                    <form action="/auth/login" method="POST" class="space-y-4">
-                        <div>
-                            <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                            <input type="email" id="email" name="email" required
-                                class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
-                        </div>
-                        <div>
-                            <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                            <input type="password" id="password" name="password" required
-                                class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
-                        </div>
-                        <button type="submit"
-                            class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
-                    </form>
-                    <p class="text-center text-sm text-gray-600 mt-4">Don't have an account? <a href="/auth/register"
-                            class="text-blue-600 hover:underline">Register</a></p>
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-white">Menu</button>
                 </div>
-            </main>
+            </nav>
+        </div>
+        <ul id="mobile-menu" class="hidden flex-col space-y-2 text-center bg-blue-700 py-4 md:hidden">
+            <li><a href="/" class="block text-white hover:underline">Home</a></li>
+            <li><a href="#" class="block text-white hover:underline">Register</a></li>
+        </ul>
+    </header>
 
-            <!-- <footer class="bg-blue-600 text-white py-4">
+    <main class="py-20 px-4">
+        <div class="container mx-auto max-w-md bg-white p-8 rounded shadow">
+            <h2 class="text-2xl font-bold mb-6 text-center">Welcome Back</h2>
+            <form action="/auth/login" method="POST" class="space-y-4">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="email" name="email" required
+                        class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" required
+                        class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+                <% if (error) { %>
+                    <div class="text-sm font-semibold text-red-500 text-center">
+                        <%= error %>
+                    </div>
+
+                    <% } %>
+            </form>
+            <p class="text-center text-sm text-gray-600 mt-4">Don't have an account? <a href="/auth/register"
+                    class="text-blue-600 hover:underline">Register</a></p>
+        </div>
+    </main>
+
+    <!-- <footer class="bg-blue-600 text-white py-4">
                 <div class="container mx-auto text-center px-4">
                     <p>&copy; 2024 Brainstorm AI. All rights reserved.</p>
                 </div>
             </footer> -->
 
-            <script>
-                const menuToggle = document.getElementById('menu-toggle');
-                const mobileMenu = document.getElementById('mobile-menu');
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
 
-                menuToggle.addEventListener('click', () =>
-                {
-                    mobileMenu.classList.toggle('hidden');
-                });
-            </script>
-        </body>
+        menuToggle.addEventListener('click', () =>
+        {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
 
-        </html>
+</html>
