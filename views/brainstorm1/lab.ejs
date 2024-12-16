@@ -44,7 +44,7 @@
             background-color: #f6f6f6;
             padding: 20px;
             border-right: 1px solid #ccc;
-            max-width: 450px;
+            max-width: 425px;
 
             /* Default margin on all sides */
 
@@ -138,15 +138,58 @@
             class="fixed top-96 right-5 z-50  bg-opacity-80 text-gray-600 text-xs p-5 rounded-lg w-96 h-72 overflow-auto">
         </div>
 
+        <!-- Notes Container -->
         <div id="notesContainer"
-            class="absolute top-[29rem] left-[27rem] z-50 bg-opacity-80 text-gray-600 text-xs p-5 rounded-lg w-[40rem] h-72">
-            <div id="editor"></div>
+            class="absolute top-[23rem] left-[27rem] z-50 bg-opacity-80 text-gray-600 text-xs p-5 rounded-lg w-[30rem] h-72 transition-all duration-500 opacity-100 visible">
+            <div id="editor">
+
+            </div>
         </div>
+
+        <!-- Floating Toggle Button -->
+        <button id="toggleNotesButton"
+            class="fixed bottom-5 right-5 z-50 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-all duration-300">
+            Toggle Notes
+        </button>
+
+        <script>
+            // Get references to the button and notes container
+            const notesContainer = document.getElementById('notesContainer');
+            const toggleNotesButton = document.getElementById('toggleNotesButton');
+
+            // Add click event listener to toggle button
+            toggleNotesButton.addEventListener('click', () =>
+            {
+                if (notesContainer.classList.contains('opacity-100'))
+                {
+                    // Hide notes container
+                    notesContainer.classList.remove('opacity-100', 'visible');
+                    notesContainer.classList.add('opacity-0', 'invisible');
+                } else
+                {
+                    // Show notes container
+                    notesContainer.classList.remove('opacity-0', 'invisible');
+                    notesContainer.classList.add('opacity-100', 'visible');
+                }
+            });
+        </script>
+
+        <style>
+            /* Tailwind overrides for visibility handling */
+            .invisible {
+                visibility: hidden;
+            }
+
+            .visible {
+                visibility: visible;
+            }
+        </style>
 
         <!-- Quill.js JavaScript -->
         <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
         <!-- Axios CDN -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 
         <script>
             // Initialize Quill.js editor
@@ -154,9 +197,14 @@
                 theme: 'snow', // or 'bubble'
                 placeholder: 'Write your notes here...',
             });
-        </script>
+            const notescontent = '<%- JSON.stringify(history_data.note) %>';
+            const plainText = notescontent.replace(/<\/?[^>]+(>|$)/g, ''); // Strip HTML tags
 
-        <script>
+            console.log('Extracted Plain Text:', plainText);
+
+            console.log(plainText);
+            quill.root.innerHTML = plainText;
+
             let autoSaveTimer;
 
             function autoSave()

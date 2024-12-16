@@ -3,8 +3,7 @@
 
 <%- include('partials/head.ejs', {title: "Home" }) %>
 
-    <!-- Flash Message -->
-    <% if (success) { %>
+    <% if (success !="" ) { %>
         <div id="flash-overlay" class="fixed inset-0 bg-black opacity-50 z-40"></div> <!-- Semi-transparent overlay -->
 
         <div id="flash-message"
@@ -37,8 +36,6 @@
                     }
                 });
             </script>
-
-
 
             <body class="bg-gray-75">
                 <%- include('partials/header.ejs') %>
