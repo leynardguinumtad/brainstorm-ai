@@ -21,6 +21,7 @@
     "express": "^4.21.1",
     "express-session": "^1.18.1",
     "gemini-to-html": "^2.2.0",
+    "html-to-text": "^9.0.5",
     "knex": "^3.1.0",
     "markdown-it": "^14.1.0",
     "marked": "^15.0.4",
