@@ -21,17 +21,17 @@
                     <div x-data="{ selectedTab: 'most_reads' }" class="lg:col-span-2 space-y-6">
                         <!-- Toggle Buttons for Files and Results -->
                         <div class="flex space-x-4 mb-4">
-                            <button @click="selectedTab = 'most_reads'" :class="selectedTab === 'most_reads' ? 'bg-blue-500 text-white' :
+                            <button @click="selectedTab = 'most_reads'" :class="selectedTab === 'most_reads' ? 'bg-blue-600 text-white' :
                                             'bg-white text-blue-500 border border-blue-500'"
                                 class="px-4 py-2 rounded font-semibold focus:outline-none">
                                 Most Reads
                             </button>
-                            <button @click="selectedTab = 'education'" :class="selectedTab === 'education' ? 'bg-blue-500 text-white' :
+                            <button @click="selectedTab = 'education'" :class="selectedTab === 'education' ? 'bg-blue-600 text-white' :
                                             'bg-white text-blue-500 border border-blue-500'"
                                 class="px-4 py-2 rounded font-semibold focus:outline-none">
                                 Education
                             </button>
-                            <button @click="selectedTab = 'business'" :class="selectedTab === 'business' ? 'bg-blue-500 text-white' :
+                            <button @click="selectedTab = 'business'" :class="selectedTab === 'business' ? 'bg-blue-600 text-white' :
                                             'bg-white text-blue-500 border border-blue-500'"
                                 class="px-4 py-2 rounded font-semibold focus:outline-none">
                                 Business
@@ -221,12 +221,15 @@
                                 <div
                                     class="absolute top-0 left-0 right-0 bg-blue-600 rounded-t-lg py-2 px-4 flex justify-between items-center">
                                     <!-- Title -->
-                                    <p class="text-sm font-semibold text-white mb-0"><em>
-                                            <a
-                                                href="/brainstorm1/lab/<%= lab_project.id %>?pageids=<%= lab_project.pageids %>">
+                                    <p class="text-sm font-semibold mb-0">
+                                        <em>
+                                            <a href="/brainstorm1/lab/<%= lab_project.id %>?pageids=<%= lab_project.pageids %>"
+                                                class="text-white"> <!-- Add text-white here -->
                                                 <%= lab_project.lab_name %>
                                             </a>
-                                        </em></p>
+                                        </em>
+                                    </p>
+
 
                                     <!-- Dropdown Menu Button -->
                                     <div class="relative">

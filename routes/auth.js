@@ -23,7 +23,7 @@ router.post("/login", (req, res) =>
         }
         else
         {
-            if (!result)
+            if (result.length == 0)
             {
                 req.flash("error", "Account not found");
                 console.log("not found");

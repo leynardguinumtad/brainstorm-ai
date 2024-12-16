@@ -1,6 +1,92 @@
-<form action="/admin/" method="post">
-    Login to Continue:
-    username: <input type="text" name="username" id=""><br>
-    password: <input type="password" name="password" id="">
-    <button type="submit">Login</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Brainstorm AI</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom color scheme */
+        :root {
+            --blue-color: #106EBE;
+            --mint-color: #0FFCBE;
+            --light-gray: #F7FAFC;
+            --dark-gray: #2D3748;
+        }
+
+        /* Applying custom colors */
+        .bg-blue {
+            background-color: var(--blue-color);
+        }
+
+        .bg-mint {
+            background-color: var(--mint-color);
+        }
+
+        .text-blue {
+            color: var(--blue-color);
+        }
+
+        .text-mint {
+            color: var(--mint-color);
+        }
+
+        .text-dark {
+            color: var(--dark-gray);
+        }
+
+        .bg-light-gray {
+            background-color: var(--light-gray);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+    <header class="bg-blue-600 text-white py-4">
+        <div class="container mx-auto flex justify-between items-center px-4">
+            <div class="flex items-center space-x-2">
+                <!-- Logo Placeholder -->
+                <div class="w-10 h-10 flex items-center justify-center">
+                    <img src="/img/logo-bsai-final.png" alt="">
+                </div>
+
+                <h1 class="text-2xl font-bold">Brainstorm AI</h1>
+            </div>
+
+        </div>
+
+    </header>
+
+    <main class="py-20 px-4">
+        <div class="container mx-auto max-w-md bg-white p-8 rounded shadow">
+            <h2 class="text-2xl font-bold mb-6 text-center">Admin - Brainstorm AI</h2>
+            <form action="/admin" method="POST" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                    <input type="text" id="username" name="username" required
+                        class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" name="password" required
+                        class="w-full mt-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600">
+                </div>
+                <button type="submit"
+                    class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Login</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        menuToggle.addEventListener('click', () =>
+        {
+            mobileMenu.classList.toggle('hidden');
+        });
+    </script>
+</body>
+
+</html>
