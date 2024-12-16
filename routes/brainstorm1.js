@@ -190,4 +190,22 @@ router.get('/llm-stream', async (req, res) =>
 });
 
 
+router.get("/delete/:lab_id", (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+    const sql = "DELETE FROM brainstorm1s WHERE id = ?";
+    con.query(sql, [lab_id], (err, results) =>
+    {
+        if (err)
+        {
+            res.status(500).send(err);
+        }
+        else
+        {
+            res.redirect("/manage");
+        }
+    });
+});
+
+
 module.exports = router;

@@ -80,9 +80,10 @@
                                     </div>
 
                                     <!-- Delete Icon -->
-                                    <button class="absolute bottom-4 right-4 text-white p-2 focus:outline-none"
-                                        onclick="deleteLabProject('<%= lab_project.id %>')">
-                                        <i class="fa-solid fa-trash" style="color: #e60f0f;"></i>
+                                    <button class="absolute bottom-4 right-4 text-white p-2 focus:outline-none">
+
+                                        <i class="fa-solid fa-trash" style="color: #e60f0f;"
+                                            onclick="window.location.href = '/brainstorm1/delete/ <%= lab_project.id %>'"></i>
 
                                     </button>
                                 </div>
