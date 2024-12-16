@@ -2,6 +2,7 @@ const path = require("path");
 const axios = require("axios");
 const crypto = require('crypto');
 const express = require('express');
+const PDFDocument = require('pdfkit');
 const router = express.Router();
 const con = require("../db/connection");
 
@@ -12,6 +13,39 @@ const { log } = require("console");
 const genAI = new GoogleGenerativeAI("AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // Set up middleware and configurations
+
+// Route for generating and downloading the PDF
+router.get('/download-pdf/:lab_id', (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+    // Here you would fetch the project data based on `id` from the database or pass mock data
+    const project = {
+        lab_name: 'Lab Project 1',
+        transformedText: 'Detailed content of the project that will be included in the PDF.',
+        created_at: '2024-12-01'
+    };
+
+    // Create a new PDF document
+    const doc = new PDFDocument();
+
+    // Set the response headers to force download of the PDF
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=project-${lab_id}.pdf`);
+
+    // Pipe the PDF document to the response
+    doc.pipe(res);
+
+    // Add content to the PDF document
+    doc.fontSize(18).text(`Project: ${project.lab_name}`, { align: 'center' });
+    doc.moveDown();
+    doc.fontSize(12).text(`Description: ${project.transformedText}`);
+    doc.moveDown();
+    doc.fontSize(10).text(`Created on: ${project.created_at}`);
+
+    // Finalize the PDF and send it to the client
+    doc.end();
+});
+
 
 router.post("/save-pageids-rtext-ttext", (req, res) =>
 {
@@ -28,8 +62,7 @@ router.post("/save-pageids-rtext-ttext", (req, res) =>
             res.send("successfully saved");
         }
     });
-
-})
+});
 
 router.post("/save-note", (req, res) =>
 {
@@ -89,27 +122,24 @@ router.get("/lab/:lab_id", (req, res) =>
         }
         else
         {
-            // const note = result[0].note;
-            // const extractedTexts = JSON.parse(result[0].extractedTexts);
-            // const transformedText = result[0].transformedText;
-            // console.log(note);
-            // console.log(extractedTexts);
-            // console.log(transformedText);
-
-            const history = {
+            // const history_data = {
+            //     note: result[0].note,
+            //     extractedTexts: result[0].extractedTexts ? JSON.parse(result[0].extractedTexts) : [],
+            //     transformedText: result[0].transformedText,
+            // }
+            const history_data = {
                 note: result[0].note,
-                extractedTexts: JSON.parse(result[0].extractedTexts),
+                extractedTexts: result[0].extractedTexts,
                 transformedText: result[0].transformedText,
             }
 
-            console.log(history);
+
+            console.log
 
 
-            res.render("brainstorm1/lab", { lab_id: lab_id, history: history });
+            res.render("brainstorm1/lab", { lab_id: lab_id, history_data: history_data });
         }
     });
-
-
 });
 
 router.get("/search", (req, res) =>
@@ -149,7 +179,6 @@ router.get('/llm-stream', async (req, res) =>
             const chunkText = chunk.text();
             res.write(`data: ${chunkText}\n\n`);
         }
-
 
         res.end(); // Close the connection
     } catch (error)

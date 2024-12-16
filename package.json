@@ -27,6 +27,8 @@
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.11.5",
     "nodemon": "^3.1.7",
+    "pdfkit": "^0.15.2",
+    "puppeteer": "^23.10.4",
     "random": "^5.1.1",
     "wikipedia-graph": "file:"
   }

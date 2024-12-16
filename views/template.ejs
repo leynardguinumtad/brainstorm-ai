@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %>
+    </title>
+    <style>
+        /* Tailwind CSS is already linked as an external stylesheet */
+        @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.0.3/dist/tailwind.min.css');
+    </style>
+</head>
+
+<body class="p-6">
+    <div class="max-w-2xl mx-auto bg-white shadow-lg p-8 rounded-lg">
+        <h1 class="text-3xl font-bold text-center text-blue-600">
+            <%= title %>
+        </h1>
+        <p class="mt-4 text-xl">Hello, <span class="font-semibold">
+                <%= userName %>
+            </span>!</p>
+        <p class="mt-4">
+            <%= content %>
+        </p>
+    </div>
+</body>
+
+</html>
