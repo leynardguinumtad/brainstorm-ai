@@ -16,64 +16,6 @@ const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 // Set up middleware and configurations
 
 // Route for generating and downloading the PDF
-// router.get('/download-pdf/:lab_id', (req, res) =>
-// {
-//     const lab_id = req.params.lab_id;
-
-//     // Query the database for the lab project data
-//     const sql = "SELECT * FROM brainstorm1s WHERE id = ?";
-//     con.query(sql, [lab_id], (err, result) =>
-//     {
-//         if (err)
-//         {
-//             res.status(500).send(err);
-//         } else
-//         {
-//             const project = {
-//                 lab_name: result[0].lab_name,
-//                 created_at: result[0].created_at,
-//                 text_array: JSON.parse(result[0].extractedTexts), // Text array from the DB
-//                 ai_text: result[0].transformedText, // AI-generated text (HTML)
-//             };
-
-//             // Create a new PDF document
-//             const doc = new PDFDocument();
-
-//             // Set the response headers to force the download of the PDF
-//             res.setHeader('Content-Type', 'application/pdf');
-//             res.setHeader('Content-Disposition', `attachment; filename=project-${lab_id}.pdf`);
-
-//             // Pipe the PDF document to the response
-//             doc.pipe(res);
-
-//             // Add header for the website
-//             doc.fontSize(18).text('Brainstorm AI', { align: 'center' });
-//             doc.moveDown(1); // Adding space after the header
-
-//             // Add the lab name and creation date
-//             doc.fontSize(16).text(`Lab Name: ${project.lab_name}`, { align: 'center' });
-//             doc.fontSize(12).text(`Date Created: ${project.created_at}`, { align: 'center' });
-//             doc.moveDown(2); // Adding space before the content
-
-
-//             doc.fontSize(12).text('AI Generated Text:', { underline: true });
-//             doc.fontSize(10).text(project.ai_text);
-//             doc.moveDown(2); // Adding space before the next section
-
-//             // Add extracted texts from text_array as a list
-//             doc.fontSize(12).text('Extracted Texts:', { underline: true });
-//             project.text_array.forEach((text, index) =>
-//             {
-//                 doc.fontSize(10).text(`${index + 1}. ${text}`);
-//             });
-
-//             // Finalize the PDF and send it to the client
-//             doc.end();
-//         }
-//     });
-// });
-
-// Route for generating and downloading the PDF
 router.get('/download-pdf/:lab_id', (req, res) =>
 {
     const lab_id = req.params.lab_id;
@@ -214,11 +156,6 @@ router.get("/lab/:lab_id", (req, res) =>
         }
         else
         {
-            // const history_data = {
-            //     note: result[0].note,
-            //     extractedTexts: result[0].extractedTexts ? JSON.parse(result[0].extractedTexts) : [],
-            //     transformedText: result[0].transformedText,
-            // }
             const history_data = {
                 note: result[0].note,
                 extractedTexts: result[0].extractedTexts,

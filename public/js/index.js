@@ -76,6 +76,7 @@ async function llm()
     return;
   }
 
+
   responseDiv.innerHTML = ''; // Clear previous responses
 
   try
@@ -87,8 +88,6 @@ async function llm()
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ list_selected_texts }),
     });
-
-
 
     if (!response.ok)
     {

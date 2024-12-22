@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Force Directed Graph</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        svg {
+            border: 1px solid #ccc;
+            width: 40vw;
+            /* Reduced width */
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            right: 0;
+            /* Align to the right */
+        }
+
+        .node {
+            cursor: pointer;
+            fill: steelblue;
+            stroke: white;
+            stroke-width: 1.5px;
+        }
+
+        .node:hover {
+            fill: orange;
+        }
+
+        .label {
+            font-size: 12px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        /* Tooltip styling */
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 4px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .highlighted {
+            fill: red !important;
+            /* Highlight color */
+        }
+    </style>
+</head>
+
+<body>
+
+    <input type="text" name="idea" id="idea" placeholder="Enter your idea here">
+    <button type="button" id="addIdea">Add</button>
+
+    <svg></svg>
+    <div class="tooltip"></div>
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    // Define the data for the graph
+    /*
+    const nodes = [
+        { id: 1, label: "Node 1", info: "This is Node 1's info." },
+        { id: 2, label: "Node 2", info: "This is Node 2's info." },
+        { id: 3, label: "Node 3", info: "This is Node 3's info." },
+        { id: 4, label: "Node 4", info: "This is Node 4's info." },
+        { id: 5, label: "Node 5", info: "This is Node 5's info." },
+    ];
+
+    const links = [
+        { source: 1, target: 2 },
+        { source: 1, target: 3 },
+        { source: 2, target: 4 },
+        { source: 3, target: 5 },
+        { source: 4, target: 5 },
+    ];
+    */
+
+    //source of data for FDR
+    const ideas = [];
+    const nodes = [];
+    const links = [];
+
+    // Set up the SVG canvas dimensions
+    const width = window.innerWidth * 0.4; // Adjusted width (40%)
+    const height = window.innerHeight * 0.8;
+    const svg = d3.select("svg").attr("width", width).attr("height", height);
+    // Load the force-directed graph
+    load_force_directed_graph();
+
+
+    document.getElementById("addIdea").addEventListener("click", function ()
+    {
+        const idea = document.getElementById("idea").value;
+        ideas.push(idea);
+
+        console.log(ideas);
+
+
+        /*
+        if (idea)
+        {
+            const id = ideas.length + 1;
+            ideas.push({ id: id, label: idea, info: "This is " + idea + "'s info." });
+            nodes.push({ id: id, label: idea, info: "This is " + idea + "'s info." });
+            if (ideas.length > 1)
+            {
+                links.push({ source: ideas.length - 1, target: ideas.length });
+            }
+            load_force_directed_graph();
+        }
+        */
+    });
+
+
+    //this renders the force-directed graph
+    function load_force_directed_graph()
+    {
+        if (nodes.length > 0)
+        {
+
+            // Create a simulation for the force-directed graph
+            const simulation = d3.forceSimulation(nodes)
+                .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+                .force("charge", d3.forceManyBody().strength(-200))
+                .force("center", d3.forceCenter(width / 2, height / 2)); // Center the graph in the SVG container
+
+            // Create the links (edges) between nodes
+            const link = svg.append("g")
+                .selectAll(".link")
+                .data(links)
+                .enter().append("line")
+                .attr("class", "link")
+                .attr("stroke-width", 2)
+                .attr("stroke", "#aaa");
+
+            // Create the nodes
+            const node = svg.append("g")
+                .selectAll(".node")
+                .data(nodes)
+                .enter().append("circle")
+                .attr("class", "node")
+                .attr("r", 10)
+                .attr("fill", "steelblue")
+                .call(d3.drag()
+                    .on("start", dragStart)
+                    .on("drag", dragMove)
+                    .on("end", dragEnd));
+
+            // Add labels to the nodes
+            const labels = svg.append("g")
+                .selectAll(".label")
+                .data(nodes)
+                .enter().append("text")
+                .attr("class", "label")
+                .attr("dy", -30)
+                .text(d => d.label);
+
+            // Create the tooltip element
+            const tooltip = d3.select(".tooltip");
+
+            // Update positions on each tick of the simulation
+            simulation.on("tick", () =>
+            {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+
+                labels
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            });
+
+
+
+            // Mouseover and mouseout events for the tooltip
+            node.on("mouseover", function (event, d)
+            {
+                tooltip.transition().duration(200).style("opacity", .9);
+                tooltip.html(d.info) // Display the node's info on hover
+                    .style("left", (event.pageX + 5) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+                highlightAdjacentNodes(d);
+            })
+                .on("mouseout", function ()
+                {
+                    tooltip.transition().duration(200).style("opacity", 0);
+                    resetHighlights();
+                });
+
+            // Click event to highlight adjacent nodes (click to toggle)
+            node.on("click", function (event, d)
+            {
+                if (d3.select(this).classed("highlighted"))
+                {
+                    resetHighlights(); // Reset if already highlighted
+                } else
+                {
+                    highlightAdjacentNodes(d); // Highlight adjacent nodes on click
+                }
+            });
+        }
+
+
+    }
+
+    // Dragging functions
+    function dragStart(event, d)
+    {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+    }
+
+    function dragMove(event, d)
+    {
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+
+    function dragEnd(event, d)
+    {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+    }
+
+    // Highlight the adjacent nodes when hovering or clicking
+    function highlightAdjacentNodes(d)
+    {
+        // Find the adjacent nodes (linked to the current node)
+        const adjacentNodes = links.filter(link => link.source.id === d.id || link.target.id === d.id);
+        const adjacentNodeIds = adjacentNodes.map(link => link.source.id === d.id ? link.target.id : link.source.id);
+
+        // Highlight the adjacent nodes
+        node.classed("highlighted", (nodeData) =>
+        {
+            return adjacentNodeIds.includes(nodeData.id);
+        });
+
+        link.classed("highlighted", (linkData) =>
+        {
+            return linkData.source.id === d.id || linkData.target.id === d.id;
+        });
+    }
+
+    // Reset the highlighted nodes
+    function resetHighlights()
+    {
+        node.classed("highlighted", false);
+        link.classed("highlighted", false);
+    }
+</script>
+
+</html>
