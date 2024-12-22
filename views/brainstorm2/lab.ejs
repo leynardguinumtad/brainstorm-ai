@@ -307,6 +307,9 @@
             .attr("width", width)
             .attr("height", height);
 
+        //remove existing FDG
+        svg.selectAll("*").remove();
+
         // Create a group element to wrap the graph content
         const graphGroup = svg.append("g");
 
@@ -441,26 +444,53 @@
     }
 
     // Example usage of the reusable function
-    const nodes = [
+    var nodes = [
         { id: 1, label: "Node 1", info: "This is Node 1's info." },
         { id: 2, label: "Node 2", info: "This is Node 2's info." },
         { id: 3, label: "Node 3", info: "This is Node 3's info." },
         { id: 4, label: "Node 4", info: "This is Node 4's info." },
-        { id: 5, label: "Node 5", info: "This is Node 5's info." },
+
     ];
 
-    const links = [
+    var links = [
         { source: 1, target: 2 },
         { source: 1, target: 3 },
         { source: 2, target: 4 },
-        { source: 3, target: 5 },
-        { source: 4, target: 5 },
+        { source: 3, target: 4 },
+
     ];
+
+    var ideas = [];
 
     const width = window.innerWidth * 0.6;
     const height = window.innerHeight * 0.8;
 
     load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+    document.getElementById("addIdea").addEventListener("click", function ()
+    {
+        const idea = document.getElementById("idea").value;
+        ideas.push(idea);
+        console.log(ideas);
+
+        if (ideas.length >= 2)
+        {
+            axios.post("/brainstorm2/generate-fdr-data", { ideas: ideas }).then((result) =>
+            {
+                console.log(result.data);
+                nodes = result.data.nodes;
+                links = result.data.links;
+                console.log("nodes", nodes);
+                console.log("links", links);
+
+                load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+            }).catch((err) =>
+            {
+
+            });
+        }
+    });
+
+
 </script>
 
 <script>
