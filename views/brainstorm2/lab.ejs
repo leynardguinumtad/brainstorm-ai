@@ -70,235 +70,6 @@
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<!-- <script>
-    function load_force_directed_graph({ nodes, links, svgSelector, width, height })
-    {
-        // Select the SVG element and set dimensions
-        const svg = d3.select(svgSelector)
-            .attr("width", width)
-            .attr("height", height);
-
-        // Create a simulation for the force-directed graph
-        const simulation = d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(150))
-            .force("charge", d3.forceManyBody().strength(-200))
-            .force("center", d3.forceCenter(width / 2, height / 2));
-
-        // Create the links (edges) between nodes
-        const link = svg.append("g")
-            .selectAll(".link")
-            .data(links)
-            .enter().append("line")
-            .attr("class", "link")
-            .attr("stroke-width", 2)
-            .attr("stroke", "#aaa");
-
-        // Create the nodes
-        const node = svg.append("g")
-            .selectAll(".node")
-            .data(nodes)
-            .enter().append("circle")
-            .attr("class", "node")
-            .attr("r", 10)
-            .attr("fill", "steelblue")
-            .call(d3.drag()
-                .on("start", dragStart)
-                .on("drag", dragMove)
-                .on("end", dragEnd));
-
-        // Add labels to the nodes
-        const labels = svg.append("g")
-            .selectAll(".label")
-            .data(nodes)
-            .enter().append("text")
-            .attr("class", "label")
-            .attr("dy", -15)
-            .text(d => d.label);
-
-        // Create the tooltip element
-        const tooltip = d3.select(".tooltip");
-
-        // Update positions on each tick of the simulation
-        simulation.on("tick", () =>
-        {
-            link
-                .attr("x1", d => d.source.x)
-                .attr("y1", d => d.source.y)
-                .attr("x2", d => d.target.x)
-                .attr("y2", d => d.target.y);
-
-            node
-                .attr("cx", d => d.x)
-                .attr("cy", d => d.y);
-
-            labels
-                .attr("x", d => d.x)
-                .attr("y", d => d.y);
-        });
-
-        // Dragging functions
-        function dragStart(event, d)
-        {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-        }
-
-        function dragMove(event, d)
-        {
-            d.fx = event.x;
-            d.fy = event.y;
-        }
-
-        function dragEnd(event, d)
-        {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-        }
-
-        // Highlight adjacent nodes when hovering or clicking
-        function highlightAdjacentNodes(d)
-        {
-            const adjacentLinks = links.filter(link => link.source.id === d.id || link.target.id === d.id);
-            const adjacentNodeIds = adjacentLinks.map(link => link.source.id === d.id ? link.target.id : link.source.id);
-
-            node.classed("highlighted", nodeData => adjacentNodeIds.includes(nodeData.id));
-            link.classed("highlighted", linkData => linkData.source.id === d.id || linkData.target.id === d.id);
-        }
-
-        // Reset highlighted nodes
-        function resetHighlights()
-        {
-            node.classed("highlighted", false);
-            link.classed("highlighted", false);
-        }
-
-        // Mouseover and mouseout events for the tooltip
-        node.on("mouseover", function (event, d)
-        {
-            tooltip.transition().duration(200).style("opacity", 0.9);
-            tooltip.html(d.info)
-                .style("left", (event.pageX + 5) + "px")
-                .style("top", (event.pageY - 28) + "px");
-            highlightAdjacentNodes(d);
-        })
-            .on("mouseout", function ()
-            {
-                tooltip.transition().duration(200).style("opacity", 0);
-                resetHighlights();
-            });
-
-        // Click event to toggle highlights
-        node.on("click", function (event, d)
-        {
-            if (d3.select(this).classed("highlighted"))
-            {
-                resetHighlights();
-            } else
-            {
-                highlightAdjacentNodes(d);
-            }
-        });
-    }
-
-    // Example usage of the reusable function
-    /*
-    var nodes = [
-        { id: 1, label: "Node 1", info: "This is Node 1's info." },
-        { id: 2, label: "Node 2", info: "This is Node 2's info." },
-        { id: 3, label: "Node 3", info: "This is Node 3's info." },
-        { id: 4, label: "Node 4", info: "This is Node 4's info." },
-
-    ];
-
-    var links = [
-        { source: 1, target: 2 },
-        { source: 1, target: 3 },
-        { source: 2, target: 4 },
-        { source: 3, target: 4 },
-    ];
-    */
-    // Example usage of the reusable function
-    var nodes = [
-        { id: 1, label: "Node 1", info: "This is Node 1's info." },
-        { id: 2, label: "Node 2", info: "This is Node 2's info." },
-        { id: 3, label: "Node 3", info: "This is Node 3's info." },
-        { id: 4, label: "Node 4", info: "This is Node 4's info." },
-        { id: 5, label: "Node 5", info: "This is Node 5's info." },
-        { id: 6, label: "Node 6", info: "This is Node 6's info." },
-        { id: 7, label: "Node 7", info: "This is Node 7's info." },
-        { id: 8, label: "Node 8", info: "This is Node 8's info." },
-        { id: 9, label: "Node 9", info: "This is Node 9's info." },
-        { id: 10, label: "Node 10", info: "This is Node 10's info." },
-        { id: 11, label: "Node 11", info: "This is Node 11's info." },
-        { id: 12, label: "Node 12", info: "This is Node 12's info." },
-        { id: 13, label: "Node 13", info: "This is Node 13's info." },
-        { id: 14, label: "Node 14", info: "This is Node 14's info." },
-        { id: 15, label: "Node 15", info: "This is Node 15's info." },
-        { id: 16, label: "Node 16", info: "This is Node 16's info." },
-        { id: 17, label: "Node 17", info: "This is Node 17's info." },
-        { id: 18, label: "Node 18", info: "This is Node 18's info." },
-        { id: 19, label: "Node 19", info: "This is Node 19's info." },
-        { id: 20, label: "Node 20", info: "This is Node 20's info." }
-    ];
-
-    var links = [
-        { source: 1, target: 2 },
-        { source: 1, target: 3 },
-        { source: 2, target: 4 },
-        { source: 3, target: 5 },
-        { source: 4, target: 6 },
-        { source: 5, target: 7 },
-        { source: 6, target: 8 },
-        { source: 7, target: 9 },
-        { source: 8, target: 10 },
-        { source: 9, target: 11 },
-        { source: 10, target: 12 },
-        { source: 11, target: 13 },
-        { source: 12, target: 14 },
-        { source: 13, target: 15 },
-        { source: 14, target: 16 },
-        { source: 15, target: 17 },
-        { source: 16, target: 18 },
-        { source: 17, target: 19 },
-        { source: 18, target: 20 },
-        { source: 19, target: 1 } // Closing the loop
-    ];
-
-
-    var ideas = [];
-
-    const width = window.innerWidth * 0.6;
-    const height = window.innerHeight * 0.8;
-
-    load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
-
-    document.getElementById("addIdea").addEventListener("click", function ()
-    {
-        const idea = document.getElementById("idea").value;
-        ideas.push(idea);
-        console.log(ideas);
-
-        if (ideas.length >= 2)
-        {
-            axios.post("/brainstorm2/generate-fdr-data", { ideas: ideas }).then((result) =>
-            {
-                console.log(result.data);
-                nodes = result.data.nodes;
-                links = result.data.links;
-                console.log("nodes", nodes);
-                console.log("links", links);
-                load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
-            }).catch((err) =>
-            {
-
-            });
-        }
-    });
-
-
-</script> -->
 <script>
     function load_force_directed_graph({ nodes, links, svgSelector, width, height })
     {
@@ -444,6 +215,7 @@
     }
 
     // Example usage of the reusable function
+
     var nodes = [
         { id: 1, label: "Node 1", info: "This is Node 1's info." },
         { id: 2, label: "Node 2", info: "This is Node 2's info." },
@@ -461,6 +233,9 @@
     ];
 
     var ideas = [];
+
+
+
 
     const width = window.innerWidth * 0.6;
     const height = window.innerHeight * 0.8;
@@ -490,10 +265,6 @@
         }
     });
 
-
-</script>
-
-<script>
 
 </script>
 

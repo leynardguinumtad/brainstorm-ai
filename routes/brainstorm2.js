@@ -15,7 +15,25 @@ const router = express.Router();
 
 router.get('/lab', (req, res) =>
 {
-    res.render('brainstorm2/lab');
+
+    var nodes = [
+        { id: 1, label: "Node 1", info: "This is Node 1's info." },
+        { id: 2, label: "Node 2", info: "This is Node 2's info." },
+        { id: 3, label: "Node 3", info: "This is Node 3's info." },
+        { id: 4, label: "Node 4", info: "This is Node 4's info." },
+
+    ];
+
+    var links = [
+        { source: 1, target: 2 },
+        { source: 1, target: 3 },
+        { source: 2, target: 4 },
+        { source: 3, target: 4 },
+
+    ];
+
+
+    res.render('brainstorm2/lab', { nodes: nodes, links: links });
 });
 
 
@@ -120,8 +138,6 @@ router.post("/generate-fdr-data", async (req, res) =>
 
     const data = { nodes: nodes, links: links };
     res.json(data);
-
-
 });
 
 
