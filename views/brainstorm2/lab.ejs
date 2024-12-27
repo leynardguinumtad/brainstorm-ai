@@ -70,6 +70,7 @@
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 <script>
     function load_force_directed_graph({ nodes, links, svgSelector, width, height })
     {
@@ -215,7 +216,6 @@
     }
 
     // Example usage of the reusable function
-
     var nodes = [
         { id: 1, label: "Node 1", info: "This is Node 1's info." },
         { id: 2, label: "Node 2", info: "This is Node 2's info." },
@@ -251,13 +251,17 @@
         {
             axios.post("/brainstorm2/generate-fdr-data", { ideas: ideas }).then((result) =>
             {
-                console.log(result.data);
+                console.log(result);
+                console.log(result.data.nodes);
+                console.log(result.data.links);
+                /*
                 nodes = result.data.nodes;
                 links = result.data.links;
                 console.log("nodes", nodes);
                 console.log("links", links);
 
                 load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+                */
             }).catch((err) =>
             {
 

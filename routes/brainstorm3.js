@@ -1,99 +1,3 @@
-// const path = require('path');
-// const axios = require('axios');
-// const express = require('express');
-// const multer = require('multer');
-// const fs = require('fs');
-// const { GoogleGenerativeAI } = require("@google/generative-ai");
-// const { render } = require("ejs");
-// const { log } = require("console");
-// const genAI = new GoogleGenerativeAI("AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
-// const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-// // Set up middleware and configurations
-// const router = express.Router();
-
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) =>
-//     {
-//         cb(null, 'uploads/');
-//     },
-//     filename: (req, file, cb) =>
-//     {
-//         cb(null, file.originalname + path.extname(file.originalname));
-//     }
-// });
-// const upload = multer({ storage: storage });
-
-// function fileToGenerativePart(filePath, mimeType)
-// {
-//     return {
-//         inlineData: {
-//             data: fs.readFileSync(filePath).toString("base64"),
-//             mimeType,
-//         },
-//     };
-// }
-
-// router.get('/lab', (req, res) =>
-// {
-//     res.render("brainstorm3/lab");
-// });
-
-
-// router.post("/upload", upload.single('image'), async (req, res) =>
-// {
-//     try
-//     {
-//         const filePath = req.file.path; // Path to the uploaded file
-//         const mimeType = req.file.mimetype; // Mime type of the uploaded file
-
-//         const prompt = `
-//             Analyze the image and brainstorm ideas that can be extracted from it.
-//             Provide the response strictly in the following JSON format:
-//             {
-//                 "main_idea": "A brief summary of the main theme of the image",
-//                 "key_elements": ["List", "of", "important", "objects", "or", "elements"],
-//                 "creative_ideas": ["Idea 1", "Idea 2", "Idea 3"]
-//             }
-//         `;
-
-//         const imagePart = fileToGenerativePart(filePath, mimeType);
-
-//         // Generate content with structured JSON output
-//         const result = await model.generateContent([prompt, imagePart]);
-
-//         // Parse and validate JSON response
-//         let jsonResponse;
-//         try
-//         {
-//             jsonResponse = JSON.parse(result.response.text());
-//         } catch (parseError)
-//         {
-//             console.error('Failed to parse JSON response from model:', parseError);
-//             throw new Error('Model did not return a valid JSON response');
-//         }
-
-//         // Log and respond with the structured JSON result
-//         console.log(jsonResponse);
-//         res.json(jsonResponse);
-//     } catch (error)
-//     {
-//         console.error('Error generating JSON from image:', error);
-//         res.status(500).send('An error occurred while processing the image.');
-//     } finally
-//     {
-//         // Clean up the uploaded file
-//         if (req.file && req.file.path)
-//         {
-//             fs.unlinkSync(req.file.path);
-//         }
-//     }
-// });
-
-
-// module.exports = router;
-
-
 const path = require('path');
 const fs = require('fs'); // For file operations
 const express = require('express');
@@ -105,26 +9,38 @@ const router = express.Router();
 // Initialize Google Generative AI with API key
 const genAI = new GoogleGenerativeAI(process.env.API_KEY || "AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
 
-// Define a schema for structured JSON response
+// Define a schema for structured JSON response tailored for force-directed graphs
 const schema = {
-    description: "Brainstormed ideas extracted from an image",
+    description: "Nodes and links for a force-directed graph extracted from an image",
     type: SchemaType.OBJECT,
     properties: {
-        description: {
-            type: SchemaType.STRING,
-            description: "A description of the image content",
-            nullable: false,
-        },
-        ideas: {
+        nodes: {
             type: SchemaType.ARRAY,
-            description: "List of brainstormed ideas from the image",
+            description: "List of nodes representing ideas from the image",
             items: {
-                type: SchemaType.STRING,
+                type: SchemaType.OBJECT,
+                properties: {
+                    id: { type: SchemaType.INTEGER, description: "Unique node ID" },
+                    label: { type: SchemaType.STRING, description: "Label for the node" },
+                    info: { type: SchemaType.STRING, description: "Additional information about the node" }
+                },
+                required: ["id", "label", "info"]
             },
-            nullable: true,
         },
+        links: {
+            type: SchemaType.ARRAY,
+            description: "List of links between nodes",
+            items: {
+                type: SchemaType.OBJECT,
+                properties: {
+                    source: { type: SchemaType.INTEGER, description: "Source node ID" },
+                    target: { type: SchemaType.INTEGER, description: "Target node ID" }
+                },
+                required: ["source", "target"]
+            },
+        }
     },
-    required: ["description"],
+    required: ["nodes", "links"],
 };
 
 // Configure the model with schema and response configuration
@@ -149,7 +65,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-
 // Helper function to convert image file to Generative AI compatible format
 function fileToGenerativePart(filePath, mimeType)
 {
@@ -159,6 +74,26 @@ function fileToGenerativePart(filePath, mimeType)
             mimeType,
         },
     };
+}
+
+// Function to process API response and extract nodes and links
+function processGraphData(responseText)
+{
+    try
+    {
+        const responseData = JSON.parse(responseText);
+        const nodes = responseData.nodes || [];
+        const links = responseData.links || [];
+
+        console.log('Extracted Nodes:', nodes);
+        console.log('Extracted Links:', links);
+
+        return { nodes, links };
+    } catch (error)
+    {
+        console.error('Error processing graph data:', error);
+        return { nodes: [], links: [] };
+    }
 }
 
 // Route to render the upload page
@@ -175,20 +110,20 @@ router.post('/upload', upload.single('image'), async (req, res) =>
         const filePath = req.file.path; // Path to the uploaded file
         const mimeType = req.file.mimetype; // Mime type of the uploaded file
 
-        const prompt = "Brainstorm ideas that can be extracted from the image";
+        const prompt = "Extract nodes and links for a force-directed graph from the image.";
         const imagePart = fileToGenerativePart(filePath, mimeType);
 
         // Generate content with schema enforcement
         const result = await model.generateContent([prompt, imagePart]);
 
-        // Log the JSON response
-        console.log('Structured Response:', result.response.text());
+        // Extract nodes and links from structured JSON response
+        const { nodes, links } = processGraphData(result.response.text());
 
-        // Send the JSON response back to the client
-        res.json(JSON.parse(result.response.text()));
+        // Respond with structured graph data
+        res.json({ nodes, links });
     } catch (error)
     {
-        console.error('Error generating structured JSON from image:', error);
+        console.error('Error generating structured graph data from image:', error);
         res.status(500).send('An error occurred while processing the image.');
     } finally
     {
