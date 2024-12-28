@@ -9,9 +9,43 @@
 
 <body>
     upload image:
-    <form action="/brainstorm3/upload" method="post" enctype="multipart/form-data">
+    <form id="uploadForm" accept="image/*" required>
         <input type="file" name="image" id="image">
         <button type="submit">Upload</button>
+
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <script>
+            document.getElementById("uploadForm").addEventListener("submit", (e) =>
+            {
+                e.preventDefault();
+
+                const imageInput = document.getElementById("image");
+                const image = imageInput.files[0];
+
+                //check if it contains a file
+                if (!image)
+                {
+                    alert("Please select an image");
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append("image", image);
+
+                axios.post("/brainstorm3/upload", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    }
+                }).then((result) =>
+                {
+                    console.log(result.data)
+                }).catch((err) =>
+                {
+                    console.log(err);
+                });
+            });
+        </script>
 </body>
 
 </html>
