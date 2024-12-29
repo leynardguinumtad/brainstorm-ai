@@ -16,7 +16,6 @@
             padding: 0;
             position: absolute;
             right: 0;
-
         }
 
         .node {
@@ -57,8 +56,8 @@
 
     <body>
         <%- include('../partials/header.ejs', {name: "jun jun" }) %>
-            <main class="flex">
-                <!-- Left Panel -->
+            <main class="flex justify-between p-8">
+                <!-- Left Section -->
                 <div class="w-1/2 p-4 space-y-6">
                     <!-- Input Section -->
                     <div class="bg-gray-100 p-4 rounded-md shadow-md">
@@ -91,11 +90,11 @@
                     </div>
                 </div>
 
-                <!-- Graph Section -->
-                <div class="w-1/2 relative">
-                    <svg></svg>
-                    <div class="tooltip"></div>
-                </div>
+                <!-- Right Section: Force-Directed Graph -->
+                <svg class="w-1/2 h-full"></svg>
+
+                <!-- Tooltip -->
+                <div class="tooltip"></div>
             </main>
     </body>
 

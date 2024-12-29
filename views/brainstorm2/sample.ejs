@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<%- include('../partials/head.ejs', {title: "Lab 2" }) %>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        svg {
+            border: 1px solid #ccc;
+            width: 50vw;
+            /* Increased width for better visibility */
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            right: 0;
+        }
+
+        .node {
+            cursor: pointer;
+            fill: steelblue;
+            stroke: white;
+            stroke-width: 1.5px;
+        }
+
+        .node:hover {
+            fill: orange;
+        }
+
+        .label {
+            font-size: 12px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border-radius: 4px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+        }
+
+        .highlighted {
+            fill: red !important;
+        }
+    </style>
+
+    <body>
+        <%- include('../partials/header.ejs', {name: "jun jun" }) %>
+            <main class="flex flex-col gap-4 p-4 w-1/2">
+
+                <!-- Input and Button UI -->
+                <div class="bg-white shadow-md rounded-lg p-4 flex items-center gap-2">
+                    <input type="text" name="idea" id="idea" placeholder="Enter your idea here"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <button type="button" id="addIdea"
+                        class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+                        Add
+                    </button>
+                </div>
+
+                <!-- Two Columns for AI Generated and Notes -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- AI Generated Column -->
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-md h-96 overflow-auto">
+                        <h3 class="text-lg font-semibold mb-2">AI Generated</h3>
+                        <div id="aiGeneratedContent" class="text-sm text-gray-600">
+                            <!-- AI content will appear here -->
+                        </div>
+                    </div>
+
+                    <!-- Notes Column -->
+                    <div class="bg-gray-100 p-4 rounded-lg shadow-md h-96 overflow-auto">
+                        <h3 class="text-lg font-semibold mb-2">Notes</h3>
+                        <div id="notesContent" class="text-sm text-gray-600">
+                            <!-- Notes content will appear here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Force Directed Graph (on the right) -->
+                <svg></svg>
+                <div class="tooltip"></div>
+            </main>
+
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <script>
+                function load_force_directed_graph({ nodes, links, svgSelector, width, height })
+                {
+                    // Select the SVG element and set dimensions
+                    const svg = d3.select(svgSelector)
+                        .attr("width", width)
+                        .attr("height", height);
+
+                    //remove existing FDG
+                    svg.selectAll("*").remove();
+
+                    // Create a group element to wrap the graph content
+                    const graphGroup = svg.append("g");
+
+                    // Create a simulation for the force-directed graph
+                    const simulation = d3.forceSimulation(nodes)
+                        .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+                        .force("charge", d3.forceManyBody().strength(-200))
+                        .force("center", d3.forceCenter(width / 2, height / 2));
+
+                    // Create the links (edges) between nodes
+                    const link = graphGroup.append("g")
+                        .selectAll(".link")
+                        .data(links)
+                        .enter().append("line")
+                        .attr("class", "link")
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "#aaa");
+
+                    // Create the nodes
+                    const node = graphGroup.append("g")
+                        .selectAll(".node")
+                        .data(nodes)
+                        .enter().append("circle")
+                        .attr("class", "node")
+                        .attr("r", 10)
+                        .attr("fill", "steelblue")
+                        .call(d3.drag()
+                            .on("start", dragStart)
+                            .on("drag", dragMove)
+                            .on("end", dragEnd));
+
+                    // Add labels to the nodes
+                    const labels = graphGroup.append("g")
+                        .selectAll(".label")
+                        .data(nodes)
+                        .enter().append("text")
+                        .attr("class", "label")
+                        .attr("dy", -15)
+                        .text(d => d.label);
+
+                    // Create the tooltip element
+                    const tooltip = d3.select(".tooltip");
+
+                    // Update positions on each tick of the simulation
+                    simulation.on("tick", () =>
+                    {
+                        link
+                            .attr("x1", d => d.source.x)
+                            .attr("y1", d => d.source.y)
+                            .attr("x2", d => d.target.x)
+                            .attr("y2", d => d.target.y);
+
+                        node
+                            .attr("cx", d => d.x)
+                            .attr("cy", d => d.y);
+
+                        labels
+                            .attr("x", d => d.x)
+                            .attr("y", d => d.y);
+                    });
+
+                    // Dragging functions
+                    function dragStart(event, d)
+                    {
+                        if (!event.active) simulation.alphaTarget(0.3).restart();
+                        d.fx = d.x;
+                        d.fy = d.y;
+                    }
+
+                    function dragMove(event, d)
+                    {
+                        d.fx = event.x;
+                        d.fy = event.y;
+                    }
+
+                    function dragEnd(event, d)
+                    {
+                        if (!event.active) simulation.alphaTarget(0);
+                        d.fx = null;
+                        d.fy = null;
+                    }
+
+                    // Highlight adjacent nodes when hovering or clicking
+                    function highlightAdjacentNodes(d)
+                    {
+                        const adjacentLinks = links.filter(link => link.source.id === d.id || link.target.id === d.id);
+                        const adjacentNodeIds = adjacentLinks.map(link => link.source.id === d.id ? link.target.id : link.source.id);
+
+                        node.classed("highlighted", nodeData => adjacentNodeIds.includes(nodeData.id));
+                        link.classed("highlighted", linkData => linkData.source.id === d.id || linkData.target.id === d.id);
+                    }
+
+                    // Reset highlighted nodes
+                    function resetHighlights()
+                    {
+                        node.classed("highlighted", false);
+                        link.classed("highlighted", false);
+                    }
+
+                    // Mouseover and mouseout events for the tooltip
+                    node.on("mouseover", function (event, d)
+                    {
+                        tooltip.transition().duration(200).style("opacity", 0.9);
+                        tooltip.html(d.info)
+                            .style("left", (event.pageX + 5) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                        highlightAdjacentNodes(d);
+                    })
+                        .on("mouseout", function ()
+                        {
+                            tooltip.transition().duration(200).style("opacity", 0);
+                            resetHighlights();
+                        });
+
+                    // Click event to toggle highlights
+                    node.on("click", function (event, d)
+                    {
+                        if (d3.select(this).classed("highlighted"))
+                        {
+                            resetHighlights();
+                        } else
+                        {
+                            highlightAdjacentNodes(d);
+                        }
+                    });
+
+                    // Add zoom functionality
+                    svg.call(d3.zoom().on("zoom", (event) =>
+                    {
+                        graphGroup.attr("transform", event.transform);
+                    }));
+                }
+
+                // Example usage of the reusable function
+                var nodes = [
+                    { id: 1, label: "Node 1", info: "This is Node 1's info." },
+                    { id: 2, label: "Node 2", info: "This is Node 2's info." },
+                    { id: 3, label: "Node 3", info: "This is Node 3's info." },
+                    { id: 4, label: "Node 4", info: "This is Node 4's info." },
+
+                ];
+
+                var links = [
+                    { source: 1, target: 2 },
+                    { source: 1, target: 3 },
+                    { source: 2, target: 4 },
+                    { source: 3, target: 4 },
+
+                ];
+
+                var ideas = [];
+
+                const width = window.innerWidth * 0.6;
+                const height = window.innerHeight * 0.8;
+
+                load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+
+                document.getElementById("addIdea").addEventListener("click", function ()
+                {
+                    const idea = document.getElementById("idea").value;
+                    ideas.push(idea);
+                    console.log(ideas);
+
+                    if (ideas.length >= 2)
+                    {
+                        axios.post("/brainstorm2/generate-fdr-data", { ideas: ideas }).then((result) =>
+                        {
+                            console.log(result);
+                            console.log(result.data.nodes);
+                            console.log(result.data.links);
+
+                            nodes = result.data.nodes;
+                            links = result.data.links;
+                            console.log("nodes", nodes);
+                            console.log("links", links);
+
+                            load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+
+                        }).catch((err) =>
+                        {
+
+                        });
+                    }
+                });
+
+
+            </script>
+    </body>
+
+</html>
