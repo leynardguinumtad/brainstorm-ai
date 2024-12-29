@@ -75,19 +75,28 @@ router.get("/lab", (req, res) =>
 
 router.post("/generate-fdr-data", async (req, res) =>
 {
-    const ideas_list = req.body.ideas;
-    console.log(ideas_list);
+    try
+    {
+        const ideas_list = req.body.ideas;
+        console.log(ideas_list);
 
-    const prompt = `Brainstorm using the given array of ideas. Extract nodes and links for a force-directed graph from the following array of ideas: [${ideas_list.join(", ")}]. add links to relate these ideas`;
+        const prompt = `Brainstorm using the given array of ideas. Extract nodes and links for a force-directed graph from the following array of ideas: [${ideas_list.join(", ")}]. add links to relate these ideas`;
 
-    // const prompt = `Given the following array of ideas: [${ideas_list.join(", ")}], brainstorm their relationships and interconnectedness. 
-    //                 Identify key nodes representing each idea and determine meaningful links between them to illustrate their connections in a force-directed graph. 
-    //                 Extract essential information for each node, such as unique IDs, labels, and additional context, and define clear links specifying source and target node IDs to represent their relationships.`;
+        // const prompt = `Given the following array of ideas: [${ideas_list.join(", ")}], brainstorm their relationships and interconnectedness. 
+        //                 Identify key nodes representing each idea and determine meaningful links between them to illustrate their connections in a force-directed graph. 
+        //                 Extract essential information for each node, such as unique IDs, labels, and additional context, and define clear links specifying source and target node IDs to represent their relationships.`;
 
-    const result = await model.generateContent(prompt);
-    const { nodes, links } = processGraphData(result.response.text());
+        const result = await model.generateContent(prompt);
+        const { nodes, links } = processGraphData(result.response.text());
 
-    res.json({ nodes, links });
+        res.json({ nodes, links });
+    }
+    catch (err)
+    {
+        console.error(err);
+        res.json({ nodes: [], links: [] });
+
+    }
 });
 
 module.exports = router;

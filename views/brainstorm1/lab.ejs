@@ -190,76 +190,14 @@
         <!-- Axios CDN -->
         <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-
         <script>
-            // Initialize Quill.js editor
-            var quill = new Quill('#editor', {
-                theme: 'snow', // or 'bubble'
-                placeholder: 'Write your notes here...',
-            });
-            const notescontent = '<%- JSON.stringify(history_data.note) %>';
-            const plainText = notescontent.replace(/<\/?[^>]+(>|$)/g, ''); // Strip HTML tags
-
-            console.log('Extracted Plain Text:', plainText);
-
-            console.log(plainText);
-            quill.root.innerHTML = plainText;
-
-            let autoSaveTimer;
-
-            function autoSave()
-            {
-                const htmlContent = quill.root.innerHTML;
-                var lab_id = <%= lab_id %>;
-
-                console.log(htmlContent);
-                console.log(lab_id);
-
-                axios.post('http://localhost:3000/brainstorm1/save-note', { lab_id: lab_id, htmlContent: htmlContent }).then((result) =>
-                {
-                    console.log(result)
-                }).catch((err) =>
-                {
-                    console.log(err);
-                });
-            }
-
-            quill.on('text-change', () =>
-            {
-                clearTimeout(autoSaveTimer);
-                autoSaveTimer = setTimeout(autoSave, 5000);
-            });
+            //access and declare the lab_id in this part. 
+            //access the variable from the /public/js/index.js.
+            //it is because the scope of the variable declared using the const
+            const lab_id = <%= lab_id %>;
         </script>
 
-        <script>
-            function save_pageIds_rawText_transText()
-            {
-                var pageids = get_pageIds();
-                //list_selected_texts
-                var transformedText = document.getElementById("transformedTextContainer").innerHTML;
-                var lab_id = <%= lab_id %>;
-
-                console.log("pageids: ", pageids);
-                console.log("selected text: ", list_selected_texts);
-                console.log("ai: ", transformedText);
-
-                axios.post("http://localhost:3000/brainstorm1/save-pageids-rtext-ttext", { lab_id: lab_id, pageids: pageids, texts_list: list_selected_texts, transformedText: transformedText }).then((result) =>
-                {
-                    console.log(result);
-                }).catch((err) =>
-                {
-                    console.log(err);
-                });
-            }
-        </script>
-
-        <script>
-
-
-
-        </script>
-
-        <script src="/js/index.js"></script>
+        <script src="/js/index.js" defer></script>
 
 </body>
 

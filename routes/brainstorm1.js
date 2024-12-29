@@ -13,7 +13,6 @@ const { log } = require("console");
 
 const genAI = new GoogleGenerativeAI("AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-// Set up middleware and configurations
 
 // Route for generating and downloading the PDF
 router.get('/download-pdf/:lab_id', (req, res) =>
@@ -120,7 +119,6 @@ router.post("/save-note", (req, res) =>
     });
 });
 
-
 router.get("/create-lab/:pageId/:title", (req, res) =>
 {
     const pageId = req.params.pageId;
@@ -156,17 +154,9 @@ router.get("/lab/:lab_id", (req, res) =>
         }
         else
         {
-            const history_data = {
-                note: result[0].note,
-                extractedTexts: result[0].extractedTexts,
-                transformedText: result[0].transformedText,
-            }
 
 
-            console.log
-
-
-            res.render("brainstorm1/lab", { lab_id: lab_id, history_data: history_data, name: req.session.name });
+            res.render("brainstorm1/lab", { lab_id: lab_id, name: req.session.name });
         }
     });
 });
@@ -234,6 +224,51 @@ router.get("/delete/:lab_id", (req, res) =>
             res.redirect("/manage");
         }
     });
+});
+
+router.get("/load-history/:lab_id", (req, res) =>
+{
+    //array of extracted text,
+    //notes
+    //ai generated text
+
+    const lab_id = req.params.lab_id;
+
+    const sql = "SELECT * FROM brainstorm1s WHERE id = ?";
+
+    con.query(sql, [lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            res.status(500).send(err);
+        }
+        else
+        {
+            const note = result[0].note;
+            const transformedText = result[0].transformedText;
+            const extractedTexts = JSON.parse(result[0].extractedTexts);
+
+            console.log("note:", note);
+            console.log("ai: ", transformedText);
+            console.log("array:", extractedTexts);
+
+            const history = {
+                note: note,
+                transformedText: transformedText,
+                extractedTexts: extractedTexts,
+            }
+
+            console.log(history);
+
+
+            res.json(history);
+
+
+        }
+    })
+
+
+
 });
 
 

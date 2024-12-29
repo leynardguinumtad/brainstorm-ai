@@ -1,5 +1,4 @@
 let list_selected_texts = [];
-
 // ===========================================================================
 function displayTextInContainer(textList)
 {
@@ -61,10 +60,61 @@ function displayTextInContainer(textList)
 
   // Append the list to the container
   container.appendChild(list);
-
-
-
 }
+
+
+// Initialize Quill.js editor
+var quill = new Quill('#editor', {
+  theme: 'snow', // or 'bubble'
+  placeholder: 'Write your notes here...',
+});
+
+let autoSaveTimer;
+
+function autoSave()
+{
+  const htmlContent = quill.root.innerHTML;
+
+  console.log(htmlContent);
+  console.log(lab_id);
+
+  axios.post('http://localhost:3000/brainstorm1/save-note', { lab_id: lab_id, htmlContent: htmlContent }).then((result) =>
+  {
+    console.log(result)
+  }).catch((err) =>
+  {
+    console.log(err);
+  });
+}
+
+quill.on('text-change', () =>
+{
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(autoSave, 5000);
+});
+
+function save_pageIds_rawText_transText()
+{
+  var pageids = get_pageIds();
+  //list_selected_texts
+  var transformedText = document.getElementById("transformedTextContainer").innerHTML;
+
+
+  console.log("pageids: ", pageids);
+  console.log("selected text: ", list_selected_texts);
+  console.log("ai: ", transformedText);
+
+  axios.post("http://localhost:3000/brainstorm1/save-pageids-rtext-ttext", { lab_id: lab_id, pageids: pageids, texts_list: list_selected_texts, transformedText: transformedText }).then((result) =>
+  {
+    console.log(result);
+  }).catch((err) =>
+  {
+    console.log(err);
+  });
+}
+
+
+
 
 
 async function llm()
@@ -115,6 +165,37 @@ async function llm()
     responseDiv.innerHTML = `<p><em>Unexpected error occurred: ${error.message}</em></p>`;
   }
 }
+
+
+
+document.addEventListener("DOMContentLoaded", async () =>
+{
+  await axios.get("/brainstorm1/load-history/28").then((result) =>
+  {
+    console.log(result);
+
+    //note
+    if (result.data.note != null)
+    {
+      quill.clipboard.dangerouslyPasteHTML(result.data.note);
+    }
+    //array
+    if (result.data.extractedTexts != null)
+    {
+      list_selected_texts = result.data.extractedTexts;
+      displayTextInContainer(list_selected_texts);
+    }
+    //ai
+    if (result.data.transformedText != null)
+    {
+      const responseDiv = document.getElementById('transformedTextContainer');
+      responseDiv.innerHTML = result.data.transformedText;
+    }
+  }).catch((err) =>
+  {
+    console.error(err);
+  });
+});
 
 // ===========================================================================
 let currentPage = null;
