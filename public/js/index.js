@@ -170,7 +170,7 @@ async function llm()
 
 document.addEventListener("DOMContentLoaded", async () =>
 {
-  await axios.get("/brainstorm1/load-history/28").then((result) =>
+  await axios.get(`/brainstorm1/load-history/${lab_id}`).then((result) =>
   {
     console.log(result);
 
