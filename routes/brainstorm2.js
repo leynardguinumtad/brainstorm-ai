@@ -7,7 +7,7 @@ const { render } = require("ejs");
 const { log } = require("console");
 const router = express.Router();
 
-const genAI = new GoogleGenerativeAI("AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
+const genAI = new GoogleGenerativeAI("AIzaSyD_q8OD37k1Y5dpMLcouaxQR7eyxZagSbk");
 
 const schema = {
     description:
