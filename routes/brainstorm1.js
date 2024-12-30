@@ -168,6 +168,7 @@ router.get("/search", (req, res) =>
 
 
 let list_selected_texts = [];
+
 router.post('/start-stream', express.json(), (req, res) =>
 {
     list_selected_texts = req.body.list_selected_texts || [];

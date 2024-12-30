@@ -149,4 +149,72 @@ router.post("/save-note", (req, res) =>
     });
 });
 
+
+ideas = [];
+router.post('/start-stream', express.json(), (req, res) =>
+{
+    ideas = req.body.ideas || [];
+    console.log(ideas);
+
+    if (!ideas.length)
+    {
+        return res.status(400).send('No list_selected_texts provided.');
+    }
+    res.status(200).send('Stream initialized.');
+});
+
+router.get('/llm-stream', async (req, res) =>
+{
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.setHeader('Connection', 'keep-alive');
+
+    try
+    {
+        const prompt = `relate the following: ${ideas}.`;
+        console.log(prompt);
+
+        const result = await model.generateContentStream(prompt);
+
+        for await (const chunk of result.stream)
+        {
+            const chunkText = chunk.text();
+            res.write(`data: ${chunkText}\n\n`);
+        }
+
+        res.end(); // Close the connection
+    } catch (error)
+    {
+        console.error("Error during streaming:", error);
+        res.write(`data: Error: ${error.message}\n\n`);
+        res.end();
+    }
+});
+
+
+router.post('/save_nodes_ideas_links_ai_text', (req, res) =>
+{
+    const { lab_id, nodes, ideas, links, ai_text } = req.body;
+
+    console.log("lab id is", lab_id);
+    console.log("nodes ", nodes);
+    console.log("ideas ", ideas);
+    console.log("links ", links);
+    console.log("ai_text ", ai_text);
+
+    const sql = "UPDATE brainstorm2s SET nodes = ?, links = ?, ideas = ?, ai_text = ? WHERE id = ?";
+    con.query(sql, [JSON.stringify(nodes), JSON.stringify(links), JSON.stringify(ideas), ai_text, lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            console.error(err);
+            res.status(500).send("error");
+        }
+        else
+        {
+            res.send("saved successfully");
+        }
+    });
+});
+
 module.exports = router;
