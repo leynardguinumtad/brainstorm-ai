@@ -2,7 +2,6 @@ let list_selected_texts = [];
 // ===========================================================================
 function displayTextInContainer(textList)
 {
-
   // Update the global list_selected_texts
   list_selected_texts = textList;
 

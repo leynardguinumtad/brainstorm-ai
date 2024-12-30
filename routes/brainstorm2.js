@@ -1,10 +1,12 @@
 const path = require("path");
 const axios = require("axios");
 const express = require("express");
+const crypto = require('crypto');
 
 const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const { render } = require("ejs");
 const { log } = require("console");
+const con = require("../db/connection");
 const router = express.Router();
 
 const genAI = new GoogleGenerativeAI("AIzaSyD_q8OD37k1Y5dpMLcouaxQR7eyxZagSbk");
@@ -68,9 +70,11 @@ function processGraphData(responseText)
     }
 }
 
-router.get("/lab", (req, res) =>
+router.get("/lab/:lab_id", (req, res) =>
 {
-    res.render("brainstorm2/lab");
+    const lab_id = req.params.lab_id;
+
+    res.render("brainstorm2/lab", { lab_id: lab_id, name: req.session.name });
 });
 
 router.post("/generate-fdr-data", async (req, res) =>
@@ -97,6 +101,52 @@ router.post("/generate-fdr-data", async (req, res) =>
         res.json({ nodes: [], links: [] });
 
     }
+});
+
+
+router.get("/create-lab", (req, res) =>
+{
+    const user_id = req.session.user_id;
+    const lab_name = `brainstorm_lab_${crypto.randomInt(100, 10000)}`;
+
+
+    const sql = "INSERT INTO brainstorm2s (user_id, lab_name) VALUES (?, ?)";
+
+    con.query(sql, [user_id, lab_name], (err, result) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            const lab_id = result.insertId;
+            res.redirect(`/brainstorm2/lab/${lab_id}`);
+
+        }
+    })
+});
+
+router.post("/save-note", (req, res) =>
+{
+    const { lab_id, htmlContent } = req.body;
+
+    console.log("lab id is", lab_id);
+    console.log("htmlcontent ", htmlContent);
+
+    const sql = "UPDATE brainstorm2s SET note = ? WHERE id = ?";
+    con.query(sql, [htmlContent, lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            console.error(err);
+            res.status(500).send("error");
+        }
+        else
+        {
+            res.send("saved successfully");
+        }
+    });
 });
 
 module.exports = router;

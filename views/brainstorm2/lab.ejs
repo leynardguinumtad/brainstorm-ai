@@ -54,11 +54,12 @@
         }
     </style>
 
+
     <body>
-        <%- include('../partials/header.ejs', {name: "jun jun" }) %>
+        <%- include('../partials/header.ejs', {name: name}) %>
             <main class="flex justify-between p-8">
                 <!-- Left Section -->
-                <div class="w-1/2 p-4 space-y-6">
+                <div class="w-1/2 p-4 space-y-6 mt-24">
                     <!-- Input Section -->
                     <div class="bg-gray-100 p-4 rounded-md shadow-md">
                         <h2 class="text-xl font-bold mb-2">Add a New Idea</h2>
@@ -71,20 +72,23 @@
                     </div>
 
                     <!-- Two Columns for AI & Notes -->
-                    <div class="grid grid-cols-2 gap-4 mt-4">
+                    <div class="grid grid-cols-2 gap-4 mt-4 h-[400px]">
                         <!-- AI-Generated Ideas -->
-                        <div class="bg-gray-50 p-4 rounded-md shadow-md">
+                        <div class="bg-gray-50 p-4 rounded-md shadow-md flex flex-col h-full">
                             <h3 class="text-lg font-semibold mb-2">AI-Generated Ideas</h3>
-                            <div id="aiContent" class="text-sm text-gray-700 space-y-2">
-                                <p>No AI suggestions yet.</p>
+                            <div class="text-sm text-gray-700 space-y-2 flex-grow overflow-auto">
+                                <div id="aiContent">
+                                    No AI suggestions yet.
+                                </div>
                             </div>
                         </div>
 
                         <!-- Notes Section -->
-                        <div class="bg-gray-50 p-4 rounded-md shadow-md">
+                        <div class="bg-gray-50 p-4 rounded-md shadow-md flex flex-col h-full">
                             <h3 class="text-lg font-semibold mb-2">Notes</h3>
-                            <div id="notesContent" class="text-sm text-gray-700 space-y-2">
-                                <p>No notes added yet.</p>
+                            <div id="editor"
+                                class="text-sm text-gray-700 space-y-2 flex-grow overflow-auto border rounded-md">
+                                <!-- Quill editor will initialize here -->
                             </div>
                         </div>
                     </div>
@@ -97,6 +101,46 @@
                 <div class="tooltip"></div>
             </main>
     </body>
+
+    <script>
+        //globally accessible variables
+        const lab_id = <%= lab_id %>;
+    </script>
+
+
+    <script>
+        var quill = new Quill('#editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: false, // or specify an array for custom toolbar options
+            },
+            placeholder: 'Write your notes here...'
+        });
+
+        let autoSaveTimer;
+
+        function autoSave()
+        {
+            const htmlContent = quill.root.innerHTML;
+
+            console.log(htmlContent);
+            console.log(lab_id);
+
+            axios.post('/brainstorm2/save-note', { lab_id: lab_id, htmlContent: htmlContent }).then((result) =>
+            {
+                console.log(result)
+            }).catch((err) =>
+            {
+                console.log(err);
+            });
+        }
+
+        quill.on('text-change', () =>
+        {
+            clearTimeout(autoSaveTimer);
+            autoSaveTimer = setTimeout(autoSave, 5000);
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
@@ -297,5 +341,7 @@
 
 
     </script>
+
+
 
 </html>
