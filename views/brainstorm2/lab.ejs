@@ -288,7 +288,11 @@
             //save the nodes, links, ideas, ai_text
             //initiate the LLM stream
             //after it completes, save the nodes, links, ideas, ai_text
-            llm();
+            if (ideas.length >= 2)
+            {
+                llm();
+            }
+
         }
 
         // Example usage of the reusable function
@@ -361,6 +365,7 @@
         async function llm()
         {
             const ai_text = document.getElementById("ai_text");
+            ai_text.innerHTML = "";
 
             try
             {

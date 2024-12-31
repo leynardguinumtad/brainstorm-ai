@@ -52,6 +52,12 @@ const model = genAI.getGenerativeModel({
     },
 });
 
+//this model object is used to generate a text response that relates ideas. 
+//This is because the first model generate a response in a json format that is not suitable for the user interface
+const model2 = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+});
+
 function processGraphData(responseText)
 {
     try
@@ -131,9 +137,6 @@ router.post("/save-note", (req, res) =>
 {
     const { lab_id, htmlContent } = req.body;
 
-    console.log("lab id is", lab_id);
-    console.log("htmlcontent ", htmlContent);
-
     const sql = "UPDATE brainstorm2s SET note = ? WHERE id = ?";
     con.query(sql, [htmlContent, lab_id], (err, result) =>
     {
@@ -150,7 +153,7 @@ router.post("/save-note", (req, res) =>
 });
 
 
-ideas = [];
+var ideas = [];
 router.post('/start-stream', express.json(), (req, res) =>
 {
     ideas = req.body.ideas || [];
@@ -174,7 +177,8 @@ router.get('/llm-stream', async (req, res) =>
         const prompt = `relate the following: ${ideas}.`;
         console.log(prompt);
 
-        const result = await model.generateContentStream(prompt);
+        //using the second model to generate a text response
+        const result = await model2.generateContentStream(prompt);
 
         for await (const chunk of result.stream)
         {
