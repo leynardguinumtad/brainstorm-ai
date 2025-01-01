@@ -709,3 +709,56 @@ deleteButton.on("click", () =>
   update();
 });
 
+//search functionality
+// Search Button Event Listener
+const searchButton = d3.select("#searchButton");
+
+searchButton.on("click", () =>
+{
+  const searchTerm = document.getElementById('search_field').value.trim();
+
+  if (!searchTerm)
+  {
+    alert('Please enter a search term!');
+    return;
+  }
+
+  if (!currentPage)
+  {
+    alert('No article loaded to search in!');
+    return;
+  }
+
+  // Remove previous highlights
+  currentPage.selectAll('.highlight-yellow').classed('highlight-yellow', false);
+
+  // Search for the term in the current Wikipedia article
+  let found = false;
+
+  currentPage.selectAll("p, h1, h2, h3, h4, h5, h6, li").each(function ()
+  {
+    if (found) return; // Stop if already found
+
+    const element = d3.select(this);
+    const text = element.text();
+    const regex = new RegExp(`(${searchTerm})`, 'i');
+    const match = text.match(regex);
+
+    if (match)
+    {
+      found = true;
+      const highlightedText = text.replace(regex, `<span class="highlight-yellow">${match[1]}</span>`);
+      element.html(highlightedText);
+
+      // Scroll to the highlighted text
+      element.node().scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+
+  if (!found)
+  {
+    alert(`The term "${searchTerm}" was not found in the article.`);
+  }
+});
+
+

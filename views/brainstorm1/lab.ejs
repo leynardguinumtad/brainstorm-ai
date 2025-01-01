@@ -110,6 +110,12 @@
         #deleteButton:hover {
             background-color: #c9302c;
         }
+
+
+        .highlight-yellow {
+            background-color: yellow;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -117,6 +123,8 @@
     <%- include('../partials/header.ejs', {name: name }) %>
         <div id="leftDiv">
             <div id="navbar">
+                <input type="text" name="search_field" id="search_field" placeholder="Locate Specific Topic"> <button
+                    id="searchButton">Search</button>
                 <button id="backButton">Back</button>
                 <button id="forwardButton">Forward</button>
                 <button id="deleteButton">Delete</button>
