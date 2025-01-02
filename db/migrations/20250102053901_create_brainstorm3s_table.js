@@ -12,8 +12,9 @@ exports.up = function (knex)
         table.text("note").nullable();
         table.json("nodes").nullable();
         table.json("links").nullable();
+        table.string("brainstormFocus").nullable();
         table.text("ai_text").nullable();
-        table.string("image_path").nullable();
+        table.string("image").nullable();
         table.timestamp("created_at").defaultTo(knex.fn.now());
 
         //connects this table to the users table

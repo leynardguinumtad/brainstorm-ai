@@ -8,7 +8,7 @@
         }
 
         svg {
-            border: 1px solid #ccc;
+
             width: 50vw;
             height: 100vh;
             margin: 0;
@@ -85,7 +85,6 @@
                         </form>
                     </div>
 
-
                     <!-- Uploaded Image -->
                     <div class="bg-gray-50 p-4 rounded-md shadow-md">
                         <h2 class="text-lg font-semibold mb-2">Uploaded Image</h2>
@@ -106,15 +105,15 @@
                 <!-- Right Container: Force Directed Graph -->
                 <div class="w-full md:w-1/2 relative">
                     <svg></svg>
-                    <div class="tooltip"></div>
-                </div>
 
+                </div>
+                <div class="tooltip"></div>
             </main>
 
             <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
             <script>
                 //globally accessible variables
-                const lab_id = 1;
+                const lab_id = "<%= lab_id %>";
             </script>
 
             <script>
@@ -261,6 +260,21 @@
                     }));
                 }
 
+                async function load_image()
+                {
+                    await axios.get(`/brainstorm3/load-image/${lab_id}`).then((result) =>
+                    {
+                        console.log(result);
+                        const image = result.data.image;
+                        const upload_image_content = document.getElementById("uploaded-image-content");
+                        upload_image_content.src = "/brainstorm3/images/" + image;
+
+                    }).catch((err) =>
+                    {
+                        console.error(err);
+                    });
+                }
+
                 // Example usage of the reusable function
                 var nodes = [
                     { id: 1, label: "Node 1", info: "This is Node 1's info." },
@@ -306,7 +320,7 @@
                         nodes = result.data.nodes;
                         links = result.data.links;
                         load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
-
+                        load_image();
 
 
                     }).catch((err) =>

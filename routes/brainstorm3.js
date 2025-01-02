@@ -151,12 +151,11 @@ router.post('/generate-fdg-data', upload.single('image'), async (req, res) =>
         console.log(brainstormFocus);
         console.log(lab_id);
 
-
         const filePath = req.file.path; // Path to the uploaded file
-        console.log(filePath);
+        const filename = req.file.filename; // Name of the uploaded file
+        console.log(filename);
+
         // const mimeType = req.file.mimetype; // Mime type of the uploaded file
-
-
 
         // const prompt = `Extract nodes and links for a force-directed graph from the image. ${brainstormFocus} `;
         // const imagePart = fileToGenerativePart(filePath, mimeType);
@@ -168,16 +167,17 @@ router.post('/generate-fdg-data', upload.single('image'), async (req, res) =>
         // const { nodes, links } = processGraphData(result.response.text());
 
         // save the brainstormFocus and image_path to the database
-        // const sql = "UPDATE brainstorm3s SET brainstormFocus = ?, image_path = ? WHERE lab_id = ?";
-        // const result = con.execute(sql, [brainstormFocus, filePath, lab_id], (err, result) =>
-        // {
-        //     if (err)
-        //     {
-        //         console.error(err);
-        //         res.status(500).send("error");
-        //     }
+        const sql = "UPDATE brainstorm3s SET brainstormFocus = ?, image = ? WHERE id = ?";
 
-        // });
+        const result = con.execute(sql, [brainstormFocus, filename, lab_id], (err, result) =>
+        {
+            if (err)
+            {
+                console.error(err);
+                res.status(500).send("error");
+            }
+
+        });
 
         var nodes = [
             { id: 1, label: "Node 1", info: "This is Node 1's info." },
@@ -201,13 +201,6 @@ router.post('/generate-fdg-data', upload.single('image'), async (req, res) =>
         res.status(500).send('An error occurred while processing the image.');
     } finally
     {
-
-
-        // Clean up the uploaded file
-        // if (req.file && req.file.path)
-        // {
-        //     fs.unlinkSync(req.file.path);
-        // }
 
     }
 });
@@ -250,6 +243,42 @@ router.get("/llm-stream", async (req, res) =>
         res.write(`data: Error: ${error.message}\n\n`);
         res.end();
     }
-})
+});
+
+router.get("/load-image/:lab_id", (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+
+    const sql = "SELECT * FROM brainstorm3s WHERE id = ?";
+    con.query(sql, [lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            console.log(result);
+            res.json({ image: result[0].image });
+        }
+    })
+});
+
+router.get("/images/:filename", (req, res) =>
+{
+    const uploadsFolder = path.join(__dirname, "..", "uploads"); // Path to your uploads folder
+    const fileName = req.params.filename; // Extract file name from the request
+
+    const filePath = path.join(uploadsFolder, fileName);
+
+    res.sendFile(filePath, (err) =>
+    {
+        if (err)
+        {
+            console.error(err);
+            res.status(404).send('Image not found');
+        }
+    });
+});
 
 module.exports = router;
