@@ -58,15 +58,37 @@
             fill: red !important;
             /* Highlight color */
         }
+
+        #image-preview {
+            width: 300px;
+            height: 300px;
+            border: 2px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #image-preview img {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 
 <body>
-    upload image:
-    <form id="uploadForm" accept="image/*" required>
-        <input type="file" name="image" id="image">
-        <button type="submit">Upload</button>
-    </form>
+    <div>
+        upload image:
+        <form id="uploadForm" accept="image/*" required>
+            <input type="file" name="image" id="image">
+            <button type="submit">Upload</button>
+        </form>
+
+        <div id="image-preview">
+
+        </div>
+    </div>
+
     <svg></svg>
     <div class="tooltip"></div>
 
@@ -235,15 +257,10 @@
 
         var ideas = [];
 
-
-
-
         const width = window.innerWidth * 0.6;
         const height = window.innerHeight * 0.8;
 
         load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
-
-
 
         document.getElementById("uploadForm").addEventListener("submit", (e) =>
         {
@@ -251,13 +268,6 @@
 
             const imageInput = document.getElementById("image");
             const image = imageInput.files[0];
-
-            //check if it contains a file
-            if (!image)
-            {
-                alert("Please select an image");
-                return;
-            }
 
             const formData = new FormData();
             formData.append("image", image);
@@ -278,6 +288,33 @@
                 console.log(err);
             });
         });
+
+        document.getElementById('image').addEventListener('change', function (event)
+        {
+            const file = event.target.files[0]; // Get the first file
+            const previewDiv = document.getElementById("image-preview");
+            // Clear previous content
+            previewDiv.innerHTML = '';
+
+            if (file)
+            {
+                const reader = new FileReader();
+
+                // FileReader onload callback
+                reader.onload = function (e)
+                {
+                    const img = document.createElement('img');
+                    img.src = e.target.result; // Set the image source to the FileReader result
+                    previewDiv.appendChild(img); // Append the image to the preview div
+                };
+
+                reader.readAsDataURL(file); // Read the file as a data URL
+            } else
+            {
+                previewDiv.textContent = 'No image selected';
+            }
+        });
+
     </script>
 
 </body>
