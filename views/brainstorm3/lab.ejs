@@ -116,6 +116,7 @@
                 const lab_id = "<%= lab_id %>";
             </script>
 
+
             <script>
                 function load_force_directed_graph({ nodes, links, svgSelector, width, height })
                 {
@@ -258,6 +259,8 @@
                     {
                         graphGroup.attr("transform", event.transform);
                     }));
+
+
                 }
 
                 async function load_image()
@@ -275,13 +278,67 @@
                     });
                 }
 
+                function extract_ideas()
+                {
+                    let ideas = [];
+                    nodes.forEach((node) =>
+                    {
+                        ideas.push(`${node.label}-${node.info}`);
+                    });
+                    return ideas;
+                }
+
+                async function llm()
+                {
+                    const ai_text = document.getElementById("ai-text-content");
+                    ai_text.innerHTML = "";
+
+                    try
+                    {
+                        const brainstormFocus = document.getElementById("brainstormFocus").value;
+
+                        // Send the list_selected_texts array to the server
+                        // Use absolute URL for fetch and EventSource
+                        const response = await fetch('/brainstorm3/start-stream', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ideas: ideas, brainstormFocus: brainstormFocus }),
+                        });
+
+                        if (!response.ok)
+                        {
+                            ai_text.innerHTML = `<p><em>Error occurred while initiating the stream: ${response.statusText}</em></p>`;
+                            return;
+                        }
+
+                        // Open SSE connection for the streamed response
+                        // const eventSource = new EventSource('/llm-stream');
+                        const eventSource = new EventSource('/brainstorm3/llm-stream');
+
+                        eventSource.onmessage = function (event)
+                        {
+                            ai_text.innerHTML += event.data; // Append chunk to the response div
+                        };
+
+                        eventSource.onerror = function ()
+                        {
+                            eventSource.close();
+                        };
+                    } catch (error)
+                    {
+                        console.error('Error during fetch or SSE connection:', error);
+                        ai_text.innerHTML = `<p><em>Unexpected error occurred: ${error.message}</em></p>`;
+                    }
+
+
+                }
+
                 // Example usage of the reusable function
                 var nodes = [
                     { id: 1, label: "Node 1", info: "This is Node 1's info." },
                     { id: 2, label: "Node 2", info: "This is Node 2's info." },
                     { id: 3, label: "Node 3", info: "This is Node 3's info." },
                     { id: 4, label: "Node 4", info: "This is Node 4's info." },
-
                 ];
 
                 var links = [
@@ -321,7 +378,8 @@
                         links = result.data.links;
                         load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
                         load_image();
-
+                        ideas = extract_ideas();
+                        llm();
 
                     }).catch((err) =>
                     {

@@ -8,7 +8,7 @@ const con = require("../db/connection");
 const router = express.Router();
 
 // Initialize Google Generative AI with API key
-const genAI = new GoogleGenerativeAI(process.env.API_KEY || "AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
+const genAI = new GoogleGenerativeAI(process.env.API_KEY || "AIzaSyD_q8OD37k1Y5dpMLcouaxQR7eyxZagSbk");
 
 // Define a schema for structured JSON response tailored for force-directed graphs
 const schema = {
@@ -155,21 +155,21 @@ router.post('/generate-fdg-data', upload.single('image'), async (req, res) =>
         const filename = req.file.filename; // Name of the uploaded file
         console.log(filename);
 
-        // const mimeType = req.file.mimetype; // Mime type of the uploaded file
+        const mimeType = req.file.mimetype; // Mime type of the uploaded file
 
-        // const prompt = `Extract nodes and links for a force-directed graph from the image. ${brainstormFocus} `;
-        // const imagePart = fileToGenerativePart(filePath, mimeType);
+        const prompt = `Extract nodes and links for a force-directed graph from the image. ${brainstormFocus} `;
+        const imagePart = fileToGenerativePart(filePath, mimeType);
 
-        // // Generate content with schema enforcement
-        // const result = await model.generateContent([prompt, imagePart]);
+        // Generate content with schema enforcement
+        const result = await model.generateContent([prompt, imagePart]);
 
-        // // Extract nodes and links from structured JSON response
-        // const { nodes, links } = processGraphData(result.response.text());
+        // Extract nodes and links from structured JSON response
+        const { nodes, links } = processGraphData(result.response.text());
 
-        // save the brainstormFocus and image_path to the database
+        //save the brainstormFocus and image_path to the database
         const sql = "UPDATE brainstorm3s SET brainstormFocus = ?, image = ? WHERE id = ?";
 
-        const result = con.execute(sql, [brainstormFocus, filename, lab_id], (err, result) =>
+        const result_update = con.execute(sql, [brainstormFocus, filename, lab_id], (err, result) =>
         {
             if (err)
             {
@@ -179,19 +179,22 @@ router.post('/generate-fdg-data', upload.single('image'), async (req, res) =>
 
         });
 
-        var nodes = [
-            { id: 1, label: "Node 1", info: "This is Node 1's info." },
-            { id: 2, label: "Node 2", info: "This is Node 2's info." },
-            { id: 3, label: "Node 3", info: "This is Node 3's info." },
-            { id: 4, label: "Node 4", info: "This is Node 4's info." },
-        ];
 
-        var links = [
-            { source: 1, target: 2 },
-            { source: 1, target: 3 },
-            { source: 2, target: 4 },
-            { source: 3, target: 4 },
-        ];
+        // var nodes = [
+        //     { id: 1, label: "Node 1", info: "This is Node 1's info." },
+        //     { id: 2, label: "Node 2", info: "This is Node 2's info." },
+        //     { id: 3, label: "Node 3", info: "This is Node 3's info." },
+        //     { id: 4, label: "Node 4", info: "This is Node 4's info." },
+        // ];
+
+        // var links = [
+        //     { source: 1, target: 2 },
+        //     { source: 1, target: 3 },
+        //     { source: 2, target: 4 },
+        //     { source: 3, target: 4 },
+        // ];
+
+
 
         // Respond with structured graph data
         res.json({ nodes, links });
@@ -206,21 +209,40 @@ router.post('/generate-fdg-data', upload.single('image'), async (req, res) =>
 });
 
 
-const ideas = [];
-router.post("start-stream", express.json(), (req, res) =>
-{
-    ideas = req.body.ideas || [];
-    console.log(ai_text);
 
-    if (!ai_text)
+const streamData = {};
+
+router.post("/start-stream", express.json(), (req, res) =>
+{
+    const sessionId = req.body.sessionId || "default-session";
+    streamData[sessionId] = {
+        ideas: req.body.ideas || [],
+        brainstormFocus: req.body.brainstormFocus || ""
+    };
+
+    console.log("ideas", streamData[sessionId].ideas);
+    console.log("brainstormFocus", streamData[sessionId].brainstormFocus);
+
+    if (!streamData[sessionId].ideas.length)
     {
-        return res.status(400).send("No ai_text provided.");
+        return res.status(400).send("No ideas list provided.");
     }
     res.status(200).send("Stream initialized.");
 });
 
 router.get("/llm-stream", async (req, res) =>
 {
+    const sessionId = req.query.sessionId || "default-session";
+    const sessionData = streamData[sessionId];
+
+    if (!sessionData || !sessionData.ideas.length || !sessionData.brainstormFocus)
+    {
+        return res.status(400).send("No initialized session data found.");
+    }
+
+    const prompt = `relate the following: [${sessionData.ideas}]. ${sessionData.brainstormFocus}`;
+    console.log("prompt", prompt);
+
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("Connection", "keep-alive");
@@ -228,14 +250,11 @@ router.get("/llm-stream", async (req, res) =>
     try
     {
         const result = await model2.generateContentStream(prompt);
-        const prompt = `relate the following: ${ideas}.`;
-
         for await (const chunk of result.stream)
         {
             const chunkText = chunk.text();
             res.write(`data: ${chunkText}\n\n`);
         }
-
         res.end();
     } catch (error)
     {
@@ -244,6 +263,7 @@ router.get("/llm-stream", async (req, res) =>
         res.end();
     }
 });
+
 
 router.get("/load-image/:lab_id", (req, res) =>
 {
