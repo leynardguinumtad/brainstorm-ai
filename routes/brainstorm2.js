@@ -83,7 +83,7 @@ router.get("/lab/:lab_id", (req, res) =>
     res.render("brainstorm2/lab", { lab_id: lab_id, name: req.session.name });
 });
 
-router.post("/generate-fdr-data", async (req, res) =>
+router.post("/generate-fdg-data", async (req, res) =>
 {
     try
     {

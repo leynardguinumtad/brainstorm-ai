@@ -4,6 +4,7 @@ const express = require('express');
 const multer = require('multer'); // For file uploads
 const { GoogleGenerativeAI, SchemaType } = require('@google/generative-ai');
 const crypto = require('crypto');
+const con = require("../db/connection");
 const router = express.Router();
 
 // Initialize Google Generative AI with API key
@@ -52,18 +53,26 @@ const model = genAI.getGenerativeModel({
     },
 });
 
-const uploadDir = path.join(__dirname, "uploads");
+//this model object is used to generate a text response that relates ideas. 
+//This is because the first model generate a response in a json format that is not suitable for the user interface
+const model2 = genAI.getGenerativeModel({
+    model: "gemini-1.5-flash",
+});
+
+const uploadDir = path.join(__dirname, "..", "uploads");
 //create /uploads directory if not exist
 if (!fs.existsSync(uploadDir))
 {
-    fs.mkdirSync(uploadDir), { recursive: true };
+    console.log("Creating uploads directory");
+
+    fs.mkdirSync(uploadDir);
 }
 
 // Configure Multer for file uploads
 const storage = multer.diskStorage({
     destination: (req, file, cb) =>
     {
-        cb(null, 'uploads/');
+        cb(null, uploadDir);
     },
     filename: (req, file, cb) =>
     {
@@ -103,23 +112,51 @@ function processGraphData(responseText)
     }
 }
 
-// Route to render the upload page
-router.get('/lab', (req, res) =>
+router.get("/create-lab", (req, res) =>
 {
-    res.render('brainstorm3/lab');
+    const user_id = req.session.user_id;
+    const lab_name = `brainstorm_lab_${crypto.randomInt(100, 10000)}`;
+
+    const sql = "INSERT INTO brainstorm3s (user_id, lab_name) VALUES (?, ?)";
+
+    con.query(sql, [user_id, lab_name], (err, result) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            const lab_id = result.insertId;
+            res.redirect(`/brainstorm3/lab/${lab_id}`);
+        }
+    });
+})
+
+// Route to render the upload page
+router.get('/lab/:lab_id', (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+    res.render('brainstorm3/lab', { lab_id: lab_id, name: req.session.name });
 });
 
 // Route to handle image upload and processing
-router.post('/upload', upload.single('image'), async (req, res) =>
+router.post('/generate-fdg-data', upload.single('image'), async (req, res) =>
 {
     try
     {
+        const brainstormFocus = req.body.brainstormFocus;
+        const lab_id = req.body.lab_id;
+
+        console.log(brainstormFocus);
+        console.log(lab_id);
+
+
         const filePath = req.file.path; // Path to the uploaded file
         console.log(filePath);
-
         // const mimeType = req.file.mimetype; // Mime type of the uploaded file
-        // const brainstormFocus = req.body.brainstormFocus;
-        // console.log(brainstormFocus);
+
+
 
         // const prompt = `Extract nodes and links for a force-directed graph from the image. ${brainstormFocus} `;
         // const imagePart = fileToGenerativePart(filePath, mimeType);
@@ -130,17 +167,23 @@ router.post('/upload', upload.single('image'), async (req, res) =>
         // // Extract nodes and links from structured JSON response
         // const { nodes, links } = processGraphData(result.response.text());
 
-        // // Respond with structured graph data
+        // save the brainstormFocus and image_path to the database
+        // const sql = "UPDATE brainstorm3s SET brainstormFocus = ?, image_path = ? WHERE lab_id = ?";
+        // const result = con.execute(sql, [brainstormFocus, filePath, lab_id], (err, result) =>
+        // {
+        //     if (err)
+        //     {
+        //         console.error(err);
+        //         res.status(500).send("error");
+        //     }
 
-        // res.json({ nodes, links });
-
+        // });
 
         var nodes = [
             { id: 1, label: "Node 1", info: "This is Node 1's info." },
             { id: 2, label: "Node 2", info: "This is Node 2's info." },
             { id: 3, label: "Node 3", info: "This is Node 3's info." },
             { id: 4, label: "Node 4", info: "This is Node 4's info." },
-
         ];
 
         var links = [
@@ -149,6 +192,8 @@ router.post('/upload', upload.single('image'), async (req, res) =>
             { source: 2, target: 4 },
             { source: 3, target: 4 },
         ];
+
+        // Respond with structured graph data
         res.json({ nodes, links });
     } catch (error)
     {
@@ -156,15 +201,55 @@ router.post('/upload', upload.single('image'), async (req, res) =>
         res.status(500).send('An error occurred while processing the image.');
     } finally
     {
+
+
         // Clean up the uploaded file
         // if (req.file && req.file.path)
         // {
         //     fs.unlinkSync(req.file.path);
         // }
 
-        //here we can write a code to save the image to the database
-
     }
 });
+
+
+const ideas = [];
+router.post("start-stream", express.json(), (req, res) =>
+{
+    ideas = req.body.ideas || [];
+    console.log(ai_text);
+
+    if (!ai_text)
+    {
+        return res.status(400).send("No ai_text provided.");
+    }
+    res.status(200).send("Stream initialized.");
+});
+
+router.get("/llm-stream", async (req, res) =>
+{
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+
+    try
+    {
+        const result = await model2.generateContentStream(prompt);
+        const prompt = `relate the following: ${ideas}.`;
+
+        for await (const chunk of result.stream)
+        {
+            const chunkText = chunk.text();
+            res.write(`data: ${chunkText}\n\n`);
+        }
+
+        res.end();
+    } catch (error)
+    {
+        console.error("Error during streaming:", error);
+        res.write(`data: Error: ${error.message}\n\n`);
+        res.end();
+    }
+})
 
 module.exports = router;

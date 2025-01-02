@@ -329,7 +329,7 @@
 
             if (ideas.length >= 2)
             {
-                axios.post("/brainstorm2/generate-fdr-data", { ideas: ideas }).then((result) =>
+                axios.post("/brainstorm2/generate-fdg-data", { ideas: ideas }).then((result) =>
                 {
                     console.log(result);
                     console.log(result.data.nodes);

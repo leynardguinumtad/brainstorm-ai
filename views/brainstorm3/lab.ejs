@@ -1,12 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.2/d3.min.js"></script>
+<%- include('../partials/head.ejs', {title: "Lab 3" }) %>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,13 +10,11 @@
         svg {
             border: 1px solid #ccc;
             width: 50vw;
-            /* Increased width for better visibility */
             height: 100vh;
             margin: 0;
             padding: 0;
             position: absolute;
             right: 0;
-
         }
 
         .node {
@@ -41,7 +34,6 @@
             pointer-events: none;
         }
 
-        /* Tooltip styling */
         .tooltip {
             position: absolute;
             padding: 10px;
@@ -56,242 +48,275 @@
 
         .highlighted {
             fill: red !important;
-            /* Highlight color */
         }
     </style>
-</head>
 
-<body>
-    <div>
-        upload image:
-        <form id="uploadForm" accept="image/*" required>
-            <input type="file" name="image" id="image">
-            <input list="options" id="brainstormFocus" placeholder="Describe what you want to brainstorm">
-            <datalist id="options">
-                <option value="Look for relationships">
-                <option value="Describe cause and effect">
-                <option value="Explore possible solutions">
-            </datalist>
-            <button type="submit">Upload</button>
-        </form>
+    <body>
+        <%- include('../partials/header.ejs', {name: "sample name" }) %>
 
-        <div>
-            <div id="uploaded-image">
-                <img src="" alt="" id="uploaded-image-content">
-            </div>
+            <main class="flex flex-col md:flex-row mt-20 gap-6 px-8">
 
-            <div>
-                <h2>AI Generated Text</h2>
-                <p id="ai-text-content">ai generate explanation</p>
-            </div>
-        </div>
+                <!-- Left Container: Image and AI Text -->
+                <div class="w-full md:w-1/2 flex flex-col gap-6 bg-white shadow-lg rounded-lg p-6">
 
-    </div>
+                    <!-- Upload Form -->
+                    <div class="bg-gray-50 p-4 rounded-md shadow-md">
+                        <h2 class="text-lg font-semibold mb-2">Upload Image</h2>
+                        <form id="uploadForm" class="flex flex-wrap items-center gap-3">
+                            <!-- File Input -->
+                            <input type="file" name="image" id="image"
+                                class="block w-1/3 min-w-[200px] text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600">
 
-    <svg></svg>
-    <div class="tooltip"></div>
+                            <!-- Text Input -->
+                            <input list="options" id="brainstormFocus"
+                                placeholder="Describe what you want to brainstorm"
+                                class="border border-gray-300 rounded-md px-3 py-2 text-sm w-1/3 min-w-[200px]">
+                            <datalist id="options">
+                                <option value="Look for relationships">
+                                <option value="Describe cause and effect">
+                                <option value="Explore possible solutions">
+                            </datalist>
 
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-        function load_force_directed_graph({ nodes, links, svgSelector, width, height })
-        {
-            // Select the SVG element and set dimensions
-            const svg = d3.select(svgSelector)
-                .attr("width", width)
-                .attr("height", height);
+                            <!-- Submit Button -->
+                            <button type="submit"
+                                class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md">
+                                Upload
+                            </button>
+                        </form>
+                    </div>
 
-            //remove existing FDG
-            svg.selectAll("*").remove();
 
-            // Create a group element to wrap the graph content
-            const graphGroup = svg.append("g");
+                    <!-- Uploaded Image -->
+                    <div class="bg-gray-50 p-4 rounded-md shadow-md">
+                        <h2 class="text-lg font-semibold mb-2">Uploaded Image</h2>
+                        <div id="uploaded-image"
+                            class="flex justify-center items-center h-64 border border-gray-200 rounded-md overflow-hidden">
+                            <img src="" alt="Uploaded Image" id="uploaded-image-content"
+                                class="object-contain max-h-full">
+                        </div>
+                    </div>
 
-            // Create a simulation for the force-directed graph
-            const simulation = d3.forceSimulation(nodes)
-                .force("link", d3.forceLink(links).id(d => d.id).distance(150))
-                .force("charge", d3.forceManyBody().strength(-200))
-                .force("center", d3.forceCenter(width / 2, height / 2));
+                    <!-- AI Generated Text -->
+                    <div class="bg-gray-50 p-4 rounded-md shadow-md">
+                        <h2 class="text-lg font-semibold mb-2">AI Generated Text</h2>
+                        <p id="ai-text-content" class="text-gray-600">AI generated explanation...</p>
+                    </div>
+                </div>
 
-            // Create the links (edges) between nodes
-            const link = graphGroup.append("g")
-                .selectAll(".link")
-                .data(links)
-                .enter().append("line")
-                .attr("class", "link")
-                .attr("stroke-width", 2)
-                .attr("stroke", "#aaa");
+                <!-- Right Container: Force Directed Graph -->
+                <div class="w-full md:w-1/2 relative">
+                    <svg></svg>
+                    <div class="tooltip"></div>
+                </div>
 
-            // Create the nodes
-            const node = graphGroup.append("g")
-                .selectAll(".node")
-                .data(nodes)
-                .enter().append("circle")
-                .attr("class", "node")
-                .attr("r", 10)
-                .attr("fill", "steelblue")
-                .call(d3.drag()
-                    .on("start", dragStart)
-                    .on("drag", dragMove)
-                    .on("end", dragEnd));
+            </main>
 
-            // Add labels to the nodes
-            const labels = graphGroup.append("g")
-                .selectAll(".label")
-                .data(nodes)
-                .enter().append("text")
-                .attr("class", "label")
-                .attr("dy", -15)
-                .text(d => d.label);
+            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            <script>
+                //globally accessible variables
+                const lab_id = 1;
+            </script>
 
-            // Create the tooltip element
-            const tooltip = d3.select(".tooltip");
-
-            // Update positions on each tick of the simulation
-            simulation.on("tick", () =>
-            {
-                link
-                    .attr("x1", d => d.source.x)
-                    .attr("y1", d => d.source.y)
-                    .attr("x2", d => d.target.x)
-                    .attr("y2", d => d.target.y);
-
-                node
-                    .attr("cx", d => d.x)
-                    .attr("cy", d => d.y);
-
-                labels
-                    .attr("x", d => d.x)
-                    .attr("y", d => d.y);
-            });
-
-            // Dragging functions
-            function dragStart(event, d)
-            {
-                if (!event.active) simulation.alphaTarget(0.3).restart();
-                d.fx = d.x;
-                d.fy = d.y;
-            }
-
-            function dragMove(event, d)
-            {
-                d.fx = event.x;
-                d.fy = event.y;
-            }
-
-            function dragEnd(event, d)
-            {
-                if (!event.active) simulation.alphaTarget(0);
-                d.fx = null;
-                d.fy = null;
-            }
-
-            // Highlight adjacent nodes when hovering or clicking
-            function highlightAdjacentNodes(d)
-            {
-                const adjacentLinks = links.filter(link => link.source.id === d.id || link.target.id === d.id);
-                const adjacentNodeIds = adjacentLinks.map(link => link.source.id === d.id ? link.target.id : link.source.id);
-
-                node.classed("highlighted", nodeData => adjacentNodeIds.includes(nodeData.id));
-                link.classed("highlighted", linkData => linkData.source.id === d.id || linkData.target.id === d.id);
-            }
-
-            // Reset highlighted nodes
-            function resetHighlights()
-            {
-                node.classed("highlighted", false);
-                link.classed("highlighted", false);
-            }
-
-            // Mouseover and mouseout events for the tooltip
-            node.on("mouseover", function (event, d)
-            {
-                tooltip.transition().duration(200).style("opacity", 0.9);
-                tooltip.html(d.info)
-                    .style("left", (event.pageX + 5) + "px")
-                    .style("top", (event.pageY - 28) + "px");
-                highlightAdjacentNodes(d);
-            })
-                .on("mouseout", function ()
+            <script>
+                function load_force_directed_graph({ nodes, links, svgSelector, width, height })
                 {
-                    tooltip.transition().duration(200).style("opacity", 0);
-                    resetHighlights();
+                    // Select the SVG element and set dimensions
+                    const svg = d3.select(svgSelector)
+                        .attr("width", width)
+                        .attr("height", height);
+
+                    //remove existing FDG
+                    svg.selectAll("*").remove();
+
+                    // Create a group element to wrap the graph content
+                    const graphGroup = svg.append("g");
+
+                    // Create a simulation for the force-directed graph
+                    const simulation = d3.forceSimulation(nodes)
+                        .force("link", d3.forceLink(links).id(d => d.id).distance(150))
+                        .force("charge", d3.forceManyBody().strength(-200))
+                        .force("center", d3.forceCenter(width / 2, height / 2));
+
+                    // Create the links (edges) between nodes
+                    const link = graphGroup.append("g")
+                        .selectAll(".link")
+                        .data(links)
+                        .enter().append("line")
+                        .attr("class", "link")
+                        .attr("stroke-width", 2)
+                        .attr("stroke", "#aaa");
+
+                    // Create the nodes
+                    const node = graphGroup.append("g")
+                        .selectAll(".node")
+                        .data(nodes)
+                        .enter().append("circle")
+                        .attr("class", "node")
+                        .attr("r", 10)
+                        .attr("fill", "steelblue")
+                        .call(d3.drag()
+                            .on("start", dragStart)
+                            .on("drag", dragMove)
+                            .on("end", dragEnd));
+
+                    // Add labels to the nodes
+                    const labels = graphGroup.append("g")
+                        .selectAll(".label")
+                        .data(nodes)
+                        .enter().append("text")
+                        .attr("class", "label")
+                        .attr("dy", -15)
+                        .text(d => d.label);
+
+                    // Create the tooltip element
+                    const tooltip = d3.select(".tooltip");
+
+                    // Update positions on each tick of the simulation
+                    simulation.on("tick", () =>
+                    {
+                        link
+                            .attr("x1", d => d.source.x)
+                            .attr("y1", d => d.source.y)
+                            .attr("x2", d => d.target.x)
+                            .attr("y2", d => d.target.y);
+
+                        node
+                            .attr("cx", d => d.x)
+                            .attr("cy", d => d.y);
+
+                        labels
+                            .attr("x", d => d.x)
+                            .attr("y", d => d.y);
+                    });
+
+                    // Dragging functions
+                    function dragStart(event, d)
+                    {
+                        if (!event.active) simulation.alphaTarget(0.3).restart();
+                        d.fx = d.x;
+                        d.fy = d.y;
+                    }
+
+                    function dragMove(event, d)
+                    {
+                        d.fx = event.x;
+                        d.fy = event.y;
+                    }
+
+                    function dragEnd(event, d)
+                    {
+                        if (!event.active) simulation.alphaTarget(0);
+                        d.fx = null;
+                        d.fy = null;
+                    }
+
+                    // Highlight adjacent nodes when hovering or clicking
+                    function highlightAdjacentNodes(d)
+                    {
+                        const adjacentLinks = links.filter(link => link.source.id === d.id || link.target.id === d.id);
+                        const adjacentNodeIds = adjacentLinks.map(link => link.source.id === d.id ? link.target.id : link.source.id);
+
+                        node.classed("highlighted", nodeData => adjacentNodeIds.includes(nodeData.id));
+                        link.classed("highlighted", linkData => linkData.source.id === d.id || linkData.target.id === d.id);
+                    }
+
+                    // Reset highlighted nodes
+                    function resetHighlights()
+                    {
+                        node.classed("highlighted", false);
+                        link.classed("highlighted", false);
+                    }
+
+                    // Mouseover and mouseout events for the tooltip
+                    node.on("mouseover", function (event, d)
+                    {
+                        tooltip.transition().duration(200).style("opacity", 0.9);
+                        tooltip.html(d.info)
+                            .style("left", (event.pageX + 5) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                        highlightAdjacentNodes(d);
+                    })
+                        .on("mouseout", function ()
+                        {
+                            tooltip.transition().duration(200).style("opacity", 0);
+                            resetHighlights();
+                        });
+
+                    // Click event to toggle highlights
+                    node.on("click", function (event, d)
+                    {
+                        if (d3.select(this).classed("highlighted"))
+                        {
+                            resetHighlights();
+                        } else
+                        {
+                            highlightAdjacentNodes(d);
+                        }
+                    });
+
+                    // Add zoom functionality
+                    svg.call(d3.zoom().on("zoom", (event) =>
+                    {
+                        graphGroup.attr("transform", event.transform);
+                    }));
+                }
+
+                // Example usage of the reusable function
+                var nodes = [
+                    { id: 1, label: "Node 1", info: "This is Node 1's info." },
+                    { id: 2, label: "Node 2", info: "This is Node 2's info." },
+                    { id: 3, label: "Node 3", info: "This is Node 3's info." },
+                    { id: 4, label: "Node 4", info: "This is Node 4's info." },
+
+                ];
+
+                var links = [
+                    { source: 1, target: 2 },
+                    { source: 1, target: 3 },
+                    { source: 2, target: 4 },
+
+                ];
+
+                var ideas = [];
+                const width = window.innerWidth * 0.6;
+                const height = window.innerHeight * 0.8;
+
+                load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+                document.getElementById("uploadForm").addEventListener("submit", (e) =>
+                {
+                    e.preventDefault();
+
+                    const brainstormFocus = document.getElementById("brainstormFocus");
+
+                    const imageInput = document.getElementById("image");
+                    const image = imageInput.files[0];
+
+                    const formData = new FormData();
+                    formData.append("image", image);
+                    formData.append("brainstormFocus", brainstormFocus.value);
+                    formData.append("lab_id", lab_id);
+
+                    axios.post("/brainstorm3/generate-fdg-data", formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                        }
+                    }).then((result) =>
+                    {
+                        console.log(result.data);
+                        nodes = result.data.nodes;
+                        links = result.data.links;
+                        load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+
+
+
+                    }).catch((err) =>
+                    {
+                        console.log(err);
+                    });
+
                 });
 
-            // Click event to toggle highlights
-            node.on("click", function (event, d)
-            {
-                if (d3.select(this).classed("highlighted"))
-                {
-                    resetHighlights();
-                } else
-                {
-                    highlightAdjacentNodes(d);
-                }
-            });
-
-            // Add zoom functionality
-            svg.call(d3.zoom().on("zoom", (event) =>
-            {
-                graphGroup.attr("transform", event.transform);
-            }));
-        }
-
-        // Example usage of the reusable function
-        var nodes = [
-            { id: 1, label: "Node 1", info: "This is Node 1's info." },
-            { id: 2, label: "Node 2", info: "This is Node 2's info." },
-            { id: 3, label: "Node 3", info: "This is Node 3's info." },
-            { id: 4, label: "Node 4", info: "This is Node 4's info." },
-
-        ];
-
-        var links = [
-            { source: 1, target: 2 },
-            { source: 1, target: 3 },
-            { source: 2, target: 4 },
-
-        ];
-
-        var ideas = [];
-        const width = window.innerWidth * 0.6;
-        const height = window.innerHeight * 0.8;
-
-        load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
-        document.getElementById("uploadForm").addEventListener("submit", (e) =>
-        {
-            e.preventDefault();
-
-            const brainstormFocus = document.getElementById("brainstormFocus");
-
-            const imageInput = document.getElementById("image");
-            const image = imageInput.files[0];
-
-            const formData = new FormData();
-            formData.append("image", image);
-            formData.append("brainstormFocus", brainstormFocus.value);
-
-            axios.post("/brainstorm3/upload", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                }
-            }).then((result) =>
-            {
-                console.log(result.data);
-                nodes = result.data.nodes;
-                links = result.data.links;
-                load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
-
-
-
-            }).catch((err) =>
-            {
-                console.log(err);
-            });
-
-        });
-
-    </script>
-
-</body>
+            </script>
+    </body>
 
 </html>
