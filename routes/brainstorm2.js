@@ -88,9 +88,10 @@ router.post("/generate-fdg-data", async (req, res) =>
     try
     {
         const ideas_list = req.body.ideas;
+        const brainstormFocus  = req.body.brainstormFocus;
         console.log(ideas_list);
 
-        const prompt = `Brainstorm using the given array of ideas. Extract nodes and links for a force-directed graph from the following array of ideas: [${ideas_list.join(", ")}]. add links to relate these ideas`;
+        const prompt = `Brainstorm using the given array of ideas. Extract nodes and links for a force-directed graph from the following array of ideas: [${ideas_list.join(", ")}]. add links to relate these ideas. ${brainstormFocus}`;
 
         // const prompt = `Given the following array of ideas: [${ideas_list.join(", ")}], brainstorm their relationships and interconnectedness. 
         //                 Identify key nodes representing each idea and determine meaningful links between them to illustrate their connections in a force-directed graph. 
@@ -153,10 +154,15 @@ router.post("/save-note", (req, res) =>
 });
 
 
-var ideas = [];
+const streamData = {};
 router.post('/start-stream', express.json(), (req, res) =>
 {
-    ideas = req.body.ideas || [];
+    const sessionId = req.body.sessionId || 'default';
+    streamData[sessionId] = {
+        ideas: req.body.ideas || [],
+        brainstormFocus: req.body.brainstormFocus || 'look for relationship',
+    };
+
     console.log(ideas);
 
     if (!ideas.length)
@@ -168,13 +174,17 @@ router.post('/start-stream', express.json(), (req, res) =>
 
 router.get('/llm-stream', async (req, res) =>
 {
+    const sessionId = req.query.sessionId || 'default';
+    const { ideas, brainstormFocus } = streamData[sessionId] || { ideas: [], brainstormFocus: 'look for relationship' };
+    
+
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
 
     try
     {
-        const prompt = `relate the following: ${ideas}.`;
+        const prompt = `relate the following: ${ideas}. ${brainstormFocus}`;
         console.log(prompt);
 
         //using the second model to generate a text response
@@ -217,6 +227,35 @@ router.post('/save_nodes_ideas_links_ai_text', (req, res) =>
         else
         {
             res.send("saved successfully");
+        }
+    });
+});
+
+
+router.get("/load-history/:lab_id", (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+
+    const sql = "SELECT * FROM brainstorm2s WHERE id = ?";
+    con.query(sql, [lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            res.status(500).send(err);
+        }
+        else
+        {
+
+            const data = {
+                note: result[0].note,
+                nodes: JSON.parse(result[0].nodes),
+                links: JSON.parse(result[0].links),
+                ideas: JSON.parse(result[0].ideas),
+                ai_text: result[0].ai_text, 
+                brainstormFocus: result[0].brainstormFocus, 
+            };
+
+            res.json(data);
         }
     });
 });

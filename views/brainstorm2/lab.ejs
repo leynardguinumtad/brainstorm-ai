@@ -66,6 +66,14 @@
                         <div class="flex gap-2">
                             <input type="text" id="idea" placeholder="Enter your idea here"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400">
+                            <input list="options" id="brainstormFocus" required
+                                placeholder="Describe what you want to brainstorm"
+                                class="border border-gray-300 rounded-md px-3 py-2 text-sm w-1/3 min-w-[200px]">
+                            <datalist id="options">
+                                <option value="Look for relationships">
+                                <option value="Describe cause and effect">
+                                <option value="Explore possible solutions">
+                            </datalist>
                             <button id="addIdea"
                                 class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Add</button>
                         </div>
@@ -319,17 +327,16 @@
 
         load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
 
-
-
         document.getElementById("addIdea").addEventListener("click", function ()
         {
             const idea = document.getElementById("idea").value;
+            const brainstormFocus = document.getElementById("brainstormFocus").value;
             ideas.push(idea);
             console.log(ideas);
 
             if (ideas.length >= 2)
             {
-                axios.post("/brainstorm2/generate-fdg-data", { ideas: ideas }).then((result) =>
+                axios.post("/brainstorm2/generate-fdg-data", { ideas: ideas, brainstormFocus: brainstormFocus }).then((result) =>
                 {
                     console.log(result);
                     console.log(result.data.nodes);
@@ -365,6 +372,7 @@
         async function llm()
         {
             const ai_text = document.getElementById("ai_text");
+            const brainstormFocus = document.getElementById("brainstormFocus").value;
             ai_text.innerHTML = "";
 
             try
@@ -374,7 +382,7 @@
                 const response = await fetch('/brainstorm2/start-stream', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ideas }),
+                    body: JSON.stringify({ ideas, brainstormFocus }),
                 });
 
                 if (!response.ok)
@@ -403,6 +411,45 @@
                 ai_text.innerHTML = `<p><em>Unexpected error occurred: ${error.message}</em></p>`;
             }
         }
+
+
+        document.addEventListener("DOMContentLoaded", () =>
+        {
+            console.log("lab id", lab_id);
+            axios.get(`/brainstorm2/load-history/${lab_id}`).then((result) =>
+            {
+                if (result.data.nodes != null)
+                {
+                    nodes = result.data.nodes;
+                    links = result.data.links;
+                    load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+                }
+
+                if (result.data.ideas != null)
+                {
+                    ideas = result.data.ideas;
+                }
+
+                if (result.data.ai_text != null)
+                {
+                    document.getElementById("ai_text").innerHTML = result.data.ai_text;
+                }
+
+                if (result.data.note != null)
+                {
+                    //quill.root.innerHTML = result.data.notes;
+                    quill.clipboard.dangerouslyPasteHTML(result.data.note);
+                }
+
+                if (result.data.brainstormFocus != null)
+                {
+                    document.getElementById("brainstormFocus").value = result.data.brainstormFocus;
+                }
+            }).catch((err) =>
+            {
+
+            });
+        });
     </script>
 
 

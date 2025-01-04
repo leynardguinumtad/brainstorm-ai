@@ -334,8 +334,14 @@ router.get("/load-history/:lab_id", (req, res) =>
         }
         else
         {
-            // res.json(result[0]);
-            res.send(result[0]);
+            const data = {
+                nodes: JSON.parse(result[0].nodes),
+                links: JSON.parse(result[0].links),
+                brainstormFocus: result[0].brainstormFocus,
+                ai_text: result[0].ai_text
+            }
+            res.json(data);
+
         }
     })
 });
