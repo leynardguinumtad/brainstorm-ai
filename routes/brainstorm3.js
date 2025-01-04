@@ -4,6 +4,7 @@ const express = require('express');
 const multer = require('multer'); // For file uploads
 const { GoogleGenerativeAI, SchemaType } = require('@google/generative-ai');
 const crypto = require('crypto');
+const PDFDocument = require('pdfkit');
 const con = require("../db/connection");
 const router = express.Router();
 
@@ -345,5 +346,92 @@ router.get("/load-history/:lab_id", (req, res) =>
 
         }
     })
+});
+
+router.get("/delete/:lab_id", (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+    const sql = "DELETE FROM brainstorm3s WHERE id = ?";
+    con.query(sql, [lab_id], (err, results) =>
+    {
+        if (err)
+        {
+            res.status(500).send(err);
+        }
+        else
+        {
+            res.redirect("/manage");
+        }
+    });
+});
+
+router.get('/download-pdf/:lab_id', (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+
+    // Query the database for the lab project data
+    const sql = "SELECT * FROM brainstorm2s WHERE id = ?";
+    con.query(sql, [lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            res.status(500).send(err);
+        } else
+        {
+            const project = {
+                lab_name: result[0].lab_name,
+                created_at: result[0].created_at,
+                ai_text: result[0].ai_text,
+                image: result[0].image,
+            };
+
+            // Create a new PDF document
+            const doc = new PDFDocument();
+
+            // Set the response headers to force the download of the PDF
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=project-${lab_id}.pdf`);
+
+            // Pipe the PDF document to the response
+            doc.pipe(res);
+
+            // Add blue background to the entire page
+            doc.rect(0, 0, 612, 200).fill('#1E40AF'); // Filling the page with a blue color
+
+            // Add the logo image
+            const logoPath = path.join(__dirname, '..', 'public', 'img', 'logo-bsai-final.png'); // Assuming logo is stored in the 'public' directory
+            doc.image(logoPath, { width: 75, align: 'center' }); // Add logo with a fixed width of 100px
+            doc.moveDown(2); // Move down a bit after the logo
+
+            // Add header for the website
+            doc.fontSize(18).fillColor('white').text('Brainstorm AI', { align: 'center' });
+            doc.moveDown(1); // Adding space after the header
+
+            // Add the lab name and creation date in white color
+            doc.fontSize(16).fillColor('white').text(`Lab Name: ${project.lab_name}`, { align: 'center' });
+            doc.fontSize(12).fillColor('white').text(`Date Created: ${project.created_at}`, { align: 'center' });
+            doc.moveDown(2); // Adding space before the content
+
+
+            doc.fontSize(12).fillColor('black').text('AI Generated Text:', { underline: true });
+            doc.fontSize(10).fillColor('black').text(project.ai_text);
+            doc.moveDown(2); // Adding space before the next section
+
+            // Add the logo image
+            const image_path = path.join(__dirname, '..', 'uploads', project.image); // Assuming logo is stored in the 'public' directory
+            doc.image(image_path, { width: 75, align: 'center' }); // Add logo with a fixed width of 100px
+            doc.moveDown(2); // Mov
+
+            // Add extracted texts from text_array as a list
+            // doc.fontSize(12).fillColor('black').text('Extracted Texts:', { underline: true });
+            // project.text_array.forEach((text, index) =>
+            // {
+            //     doc.fontSize(10).fillColor('black').text(`${index + 1}. ${text}`);
+            // });
+
+            // Finalize the PDF and send it to the client
+            doc.end();
+        }
+    });
 });
 module.exports = router;
