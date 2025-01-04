@@ -121,16 +121,19 @@ router.get("/manage", async (req, res) =>
     try
     {
         //Output: [rows, fields]. use array destructuring to get the rows
-        const [history_brainstorm1] = await con.promise().query("SELECT * FROM brainstorm1s WHERE id = ?", [user_id]);
-        const [history_brainstorm2] = await con.promise().query("SELECT * FROM brainstorm2s WHERE id = ?", [user_id]);
-        const [history_brainstorm3] = await con.promise().query("SELECT * FROM brainstorm3s WHERE id = ?", [user_id]);
+        const [history_brainstorm1] = await con.promise().query("SELECT * FROM brainstorm1s WHERE user_id = ?", [user_id]);
+        const [history_brainstorm2] = await con.promise().query("SELECT * FROM brainstorm2s WHERE user_id = ?", [user_id]);
+        const [history_brainstorm3] = await con.promise().query("SELECT * FROM brainstorm3s WHERE user_id = ?", [user_id]);
 
-        res.render("manage", {
+        const data = {
             history_brainstorm1: history_brainstorm1,
             history_brainstorm2: history_brainstorm2,
             history_brainstorm3: history_brainstorm3,
             name: req.session.name,
-        });
+        };
+
+        console.log("data: ", data);
+        res.render("manage", data);
     } catch (error)
     {
         console.log(error);

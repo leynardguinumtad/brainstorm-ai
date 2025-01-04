@@ -2,6 +2,7 @@ const path = require("path");
 const axios = require("axios");
 const express = require("express");
 const crypto = require('crypto');
+require("dotenv").config();
 
 const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const { render } = require("ejs");
@@ -9,7 +10,7 @@ const { log } = require("console");
 const con = require("../db/connection");
 const router = express.Router();
 
-const genAI = new GoogleGenerativeAI("AIzaSyD_q8OD37k1Y5dpMLcouaxQR7eyxZagSbk");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 const schema = {
     description:
@@ -163,12 +164,6 @@ router.post('/start-stream', express.json(), (req, res) =>
         brainstormFocus: req.body.brainstormFocus || 'look for relationship',
     };
 
-    console.log(ideas);
-
-    if (!ideas.length)
-    {
-        return res.status(400).send('No list_selected_texts provided.');
-    }
     res.status(200).send('Stream initialized.');
 });
 
@@ -177,6 +172,8 @@ router.get('/llm-stream', async (req, res) =>
     const sessionId = req.query.sessionId || 'default';
     const { ideas, brainstormFocus } = streamData[sessionId] || { ideas: [], brainstormFocus: 'look for relationship' };
 
+    console.log("ideas", ideas);
+    console.log("focus", brainstormFocus);
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');

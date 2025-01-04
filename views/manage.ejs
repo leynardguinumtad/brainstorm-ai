@@ -84,7 +84,6 @@
                         </div>
 
                         <hr>
-                        
                         <!-- Brainstorm2 -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             <!-- Display only 8 items, conditionally render if there are more than 8 -->
@@ -153,9 +152,74 @@
                                 <% }) %>
                         </div>
 
-
+                        <hr>
                         <!-- Brainstorm3 -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            <!-- Display only 8 items, conditionally render if there are more than 8 -->
+                            <% history_brainstorm3.forEach(lab_project=> { %>
+                                <div class="bg-white p-4 rounded-lg shadow-md flex flex-col h-full relative">
+                                    <!-- Background section for title -->
+                                    <div
+                                        class="absolute top-0 left-0 right-0 bg-blue-600 rounded-t-lg py-2 px-4 flex justify-between items-center">
+                                        <!-- Title -->
+                                        <p class="text-sm font-semibold text-white mb-0 hover:text-bg-white-600">
+                                            <em>
+                                                <a href="/brainstorm3/lab/<%= lab_project.id %>">
+                                                    <%= lab_project.lab_name %>
+                                                </a>
+                                            </em>
+                                        </p>
 
+                                        <!-- Dropdown Menu Button -->
+                                        <div class="relative">
+                                            <!-- Dropdown toggle button (e.g., a simple button or icon) -->
+                                            <button class="text-white focus:outline-none"
+                                                onclick="toggleDropdown(<%= lab_project.id %>)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2" d="M19 9l-7 7-7-7">
+                                                    </path>
+                                                </svg>
+                                            </button>
+
+                                            <!-- Dropdown Menu -->
+                                            <div id="dropdown-<%= lab_project.id %>"
+                                                class="dropdown-menu absolute hidden bg-white shadow-md rounded-lg mt-2 right-0 w-40 z-50">
+                                                <ul class="text-sm text-gray-700 p-5">
+                                                    <li>
+                                                        <button class="hover:text-blue-600"
+                                                            onclick="window.location.href='/brainstorm1/download-pdf/<%= lab_project.id %>'">
+                                                            Download
+                                                        </button>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Content Section -->
+                                    <div class="mt-10">
+                                        <!-- Adjusted margin-top to push content below the background -->
+                                        <!-- Limit text content -->
+                                        <p
+                                            class="text-gray-700 text-sm mb-4 overflow-hidden text-ellipsis line-clamp-3">
+                                            <%= lab_project.ai_text %>
+                                        </p>
+                                        <p class="text-xs text-gray-500">Date Created: <%= lab_project.created_at %>
+                                        </p>
+                                    </div>
+
+                                    <!-- Delete Icon -->
+                                    <button class="absolute bottom-4 right-4 text-white p-2 focus:outline-none">
+
+                                        <i class="fa-solid fa-trash" style="color: #e60f0f;"
+                                            onclick="window.location.href = '/brainstorm1/delete/ <%= lab_project.id %>'"></i>
+
+                                    </button>
+                                </div>
+                                <% }) %>
+                        </div>
 
                         <!-- Script to toggle dropdown visibility -->
                         <script>

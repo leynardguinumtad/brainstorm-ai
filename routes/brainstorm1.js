@@ -6,13 +6,13 @@ const PDFDocument = require('pdfkit');
 const htmlToText = require('html-to-text');
 const router = express.Router();
 const con = require("../db/connection");
+require("dotenv").config();
 
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 const { render } = require("ejs");
 const { log } = require("console");
 
-const genAI = new GoogleGenerativeAI("AIzaSyAd78ny7jD23ZLIXbuPH41TRRiscLFItOU");
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY); const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Route for generating and downloading the PDF
 router.get('/download-pdf/:lab_id', (req, res) =>

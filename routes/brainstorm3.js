@@ -8,7 +8,7 @@ const con = require("../db/connection");
 const router = express.Router();
 
 // Initialize Google Generative AI with API key
-const genAI = new GoogleGenerativeAI(process.env.API_KEY || "AIzaSyD_q8OD37k1Y5dpMLcouaxQR7eyxZagSbk");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 // Define a schema for structured JSON response tailored for force-directed graphs
 const schema = {
@@ -338,7 +338,8 @@ router.get("/load-history/:lab_id", (req, res) =>
                 nodes: JSON.parse(result[0].nodes),
                 links: JSON.parse(result[0].links),
                 brainstormFocus: result[0].brainstormFocus,
-                ai_text: result[0].ai_text
+                ai_text: result[0].ai_text,
+                image: result[0].image,
             }
             res.json(data);
 

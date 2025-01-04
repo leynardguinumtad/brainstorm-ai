@@ -293,30 +293,16 @@
                 graphGroup.attr("transform", event.transform);
             }));
 
-            //save the nodes, links, ideas, ai_text
-            //initiate the LLM stream
-            //after it completes, save the nodes, links, ideas, ai_text
-            if (ideas.length >= 2)
-            {
-                llm();
-            }
+
 
         }
 
         // Example usage of the reusable function
         var nodes = [
-            { id: 1, label: "Node 1", info: "This is Node 1's info." },
-            { id: 2, label: "Node 2", info: "This is Node 2's info." },
-            { id: 3, label: "Node 3", info: "This is Node 3's info." },
-            { id: 4, label: "Node 4", info: "This is Node 4's info." },
 
         ];
 
         var links = [
-            { source: 1, target: 2 },
-            { source: 1, target: 3 },
-            { source: 2, target: 4 },
-            { source: 3, target: 4 },
 
         ];
 
@@ -325,43 +311,45 @@
         const width = window.innerWidth * 0.6;
         const height = window.innerHeight * 0.8;
 
-        load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
-
         document.getElementById("addIdea").addEventListener("click", function ()
         {
             const idea = document.getElementById("idea").value;
             const brainstormFocus = document.getElementById("brainstormFocus").value;
             ideas.push(idea);
+            brainstormFocus.value = "";
+
             console.log(ideas);
 
             if (ideas.length >= 2)
             {
                 axios.post("/brainstorm2/generate-fdg-data", { ideas: ideas, brainstormFocus: brainstormFocus }).then((result) =>
                 {
-                    console.log(result);
-                    console.log(result.data.nodes);
-                    console.log(result.data.links);
 
                     nodes = result.data.nodes;
                     links = result.data.links;
-                    console.log("nodes", nodes);
-                    console.log("links", links);
 
                     load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+
+                    llm();
+
 
                 }).catch((err) =>
                 {
 
                 });
             }
+            else
+            {
+
+            }
         });
 
-        function save_nodes_ideas_links_ai_text()
+        function save_nodes_ideas_links_brainstormFocus_ai_text()
         {
             //inside of the ai-text container
             const ai_text = document.getElementById("ai_text").innerHTML;
             const brainstormFocus = document.getElementById("brainstormFocus").value;
-            axios.post("/brainstorm2/save_nodes_ideas_links_ai_text", { lab_id: lab_id, nodes: nodes, links: links, ideas: ideas, brainstormFocus: brainstormFocus, ai_text: ai_text }).then((result) =>
+            axios.post("/brainstorm2/save_nodes_ideas_links_brainstormFocus_ai_text", { lab_id: lab_id, nodes: nodes, links: links, ideas: ideas, brainstormFocus: brainstormFocus, ai_text: ai_text }).then((result) =>
             {
                 console.log(result);
             }).catch((err) =>
@@ -403,7 +391,7 @@
 
                 eventSource.onerror = function ()
                 {
-                    save_nodes_ideas_links_ai_text();
+                    save_nodes_ideas_links_brainstormFocus_ai_text();
                     eventSource.close();
                 };
             } catch (error)
@@ -412,6 +400,7 @@
                 ai_text.innerHTML = `<p><em>Unexpected error occurred: ${error.message}</em></p>`;
             }
         }
+
 
 
         document.addEventListener("DOMContentLoaded", () =>

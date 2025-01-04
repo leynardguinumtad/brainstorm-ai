@@ -267,10 +267,11 @@
                 {
                     await axios.get(`/brainstorm3/load-image/${lab_id}`).then((result) =>
                     {
-                        console.log(result);
+                        console.log("results", result);
                         const image = result.data.image;
                         const upload_image_content = document.getElementById("uploaded-image-content");
                         upload_image_content.src = "/brainstorm3/images/" + image;
+
 
                     }).catch((err) =>
                     {
@@ -340,6 +341,7 @@
 
                         eventSource.onerror = function ()
                         {
+                            save_nodes_links_brainstormFocus_ai_text();
                             eventSource.close();
                         };
                     } catch (error)
@@ -357,7 +359,7 @@
                     console.log("lab id", lab_id);
                     axios.get(`/brainstorm3/load-history/${lab_id}`).then((result) =>
                     {
-                        console.log(result);
+                        console.log("result:", result);
 
                         if (result.data.nodes != null)
                         {
@@ -378,13 +380,11 @@
 
                         if (result.data.image != null)
                         {
+                            console.log("image", result.data.image);
                             const upload_image_content = document.getElementById("uploaded-image-content");
                             upload_image_content.src = "/brainstorm3/images/" + result.data.image;
+                            //load_image();
                         }
-
-
-
-
 
                         load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
 
@@ -443,7 +443,7 @@
                         load_image();
                         ideas = extract_ideas();
                         llm();
-                        save_nodes_links_brainstormFocus_ai_text();
+
 
                     }).catch((err) =>
                     {
