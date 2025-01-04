@@ -114,7 +114,11 @@ router.get("/home", async (req, res) =>
 
 router.get("/manage", (req, res) =>
 {
-    const sql = "SELECT * FROM brainstorm1s WHERE user_id = ?";
+    let history_brainstorm1s;
+    let history_brainstorm2s;
+    let history_brainstorm3s;
+
+    let sql = "SELECT * FROM brainstorm1s WHERE user_id = ?";
     con.query(sql, [req.session.user_id], (err, results) =>
     {
         if (err)
@@ -122,24 +126,46 @@ router.get("/manage", (req, res) =>
             res.send(err);
         } else
         {
-            res.render("manage", {
-                history: results, name: req.session.name,
-            });
+            history_brainstorm1s = results;
         }
 
     });
-});
+
+    sql = "SELECT * FROM brainstorm2s WHERE user_id = ?";
+    con.query(sql, [req.session.user_id], (err, results) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        } else
+        {
+            history_brainstorm2s = results;
+        }
+
+    });
+
+    sql = "SELECT * FROM brainstorm3s WHERE user_id = ?";
+    con.query(sql, [req.session.user_id], (err, results) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        } else
+        {
+            history_brainstorm3s = results;
+        }
+
+    });
 
 
-router.post("/try-axios", (req, res) =>
-{
-    const { var1, var2 } = req.body;
-    console.log("axios is working");
-    console.log(var1);
-    console.log(var2);
 
 
-
+    res.render("manage", {
+        history_brainstorm1s: history_brainstorm1s,
+        history_brainstorm2s: history_brainstorm2s,
+        history_brainstorm3s: history_brainstorm3s,
+        name: req.session.name,
+    });
 });
 
 module.exports = router;
