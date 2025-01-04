@@ -88,7 +88,7 @@ router.post("/generate-fdg-data", async (req, res) =>
     try
     {
         const ideas_list = req.body.ideas;
-        const brainstormFocus  = req.body.brainstormFocus;
+        const brainstormFocus = req.body.brainstormFocus;
         console.log(ideas_list);
 
         const prompt = `Brainstorm using the given array of ideas. Extract nodes and links for a force-directed graph from the following array of ideas: [${ideas_list.join(", ")}]. add links to relate these ideas. ${brainstormFocus}`;
@@ -176,7 +176,7 @@ router.get('/llm-stream', async (req, res) =>
 {
     const sessionId = req.query.sessionId || 'default';
     const { ideas, brainstormFocus } = streamData[sessionId] || { ideas: [], brainstormFocus: 'look for relationship' };
-    
+
 
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
@@ -206,18 +206,19 @@ router.get('/llm-stream', async (req, res) =>
 });
 
 
-router.post('/save_nodes_ideas_links_ai_text', (req, res) =>
+router.post('/save_nodes_ideas_links_brainstormFocus_ai_text', (req, res) =>
 {
-    const { lab_id, nodes, ideas, links, ai_text } = req.body;
+    const { lab_id, nodes, links, ideas, brainstormFocus, ai_text } = req.body;
 
     console.log("lab id is", lab_id);
     console.log("nodes ", nodes);
     console.log("ideas ", ideas);
     console.log("links ", links);
     console.log("ai_text ", ai_text);
+    console.log("brainstormFocus ", brainstormFocus);
 
-    const sql = "UPDATE brainstorm2s SET nodes = ?, links = ?, ideas = ?, ai_text = ? WHERE id = ?";
-    con.query(sql, [JSON.stringify(nodes), JSON.stringify(links), JSON.stringify(ideas), ai_text, lab_id], (err, result) =>
+    const sql = "UPDATE brainstorm2s SET nodes = ?, links = ?, ideas = ?, brainstormFocus = ?,  ai_text = ? WHERE id = ?";
+    con.query(sql, [JSON.stringify(nodes), JSON.stringify(links), JSON.stringify(ideas), brainstormFocus, ai_text, lab_id], (err, result) =>
     {
         if (err)
         {
@@ -251,8 +252,8 @@ router.get("/load-history/:lab_id", (req, res) =>
                 nodes: JSON.parse(result[0].nodes),
                 links: JSON.parse(result[0].links),
                 ideas: JSON.parse(result[0].ideas),
-                ai_text: result[0].ai_text, 
-                brainstormFocus: result[0].brainstormFocus, 
+                ai_text: result[0].ai_text,
+                brainstormFocus: result[0].brainstormFocus,
             };
 
             res.json(data);

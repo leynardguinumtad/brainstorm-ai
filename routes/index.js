@@ -112,60 +112,30 @@ router.get("/home", async (req, res) =>
 });
 
 
-router.get("/manage", (req, res) =>
+router.get("/manage", async (req, res) =>
 {
-    let history_brainstorm1s;
-    let history_brainstorm2s;
-    let history_brainstorm3s;
+    //the mysql2 supports promises
+    //in this approach, queries are handled sequentially to ensure that all data are fetched before res.render
+    const user_id = req.session.user_id;
 
-    let sql = "SELECT * FROM brainstorm1s WHERE user_id = ?";
-    con.query(sql, [req.session.user_id], (err, results) =>
+    try
     {
-        if (err)
-        {
-            res.send(err);
-        } else
-        {
-            history_brainstorm1s = results;
-        }
+        //Output: [rows, fields]. use array destructuring to get the rows
+        const [history_brainstorm1] = await con.promise().query("SELECT * FROM brainstorm1s WHERE id = ?", [user_id]);
+        const [history_brainstorm2] = await con.promise().query("SELECT * FROM brainstorm2s WHERE id = ?", [user_id]);
+        const [history_brainstorm3] = await con.promise().query("SELECT * FROM brainstorm3s WHERE id = ?", [user_id]);
 
-    });
-
-    sql = "SELECT * FROM brainstorm2s WHERE user_id = ?";
-    con.query(sql, [req.session.user_id], (err, results) =>
+        res.render("manage", {
+            history_brainstorm1: history_brainstorm1,
+            history_brainstorm2: history_brainstorm2,
+            history_brainstorm3: history_brainstorm3,
+            name: req.session.name,
+        });
+    } catch (error)
     {
-        if (err)
-        {
-            res.send(err);
-        } else
-        {
-            history_brainstorm2s = results;
-        }
-
-    });
-
-    sql = "SELECT * FROM brainstorm3s WHERE user_id = ?";
-    con.query(sql, [req.session.user_id], (err, results) =>
-    {
-        if (err)
-        {
-            res.send(err);
-        } else
-        {
-            history_brainstorm3s = results;
-        }
-
-    });
-
-
-
-
-    res.render("manage", {
-        history_brainstorm1s: history_brainstorm1s,
-        history_brainstorm2s: history_brainstorm2s,
-        history_brainstorm3s: history_brainstorm3s,
-        name: req.session.name,
-    });
+        console.log(error);
+        res.status(400).send(` error ${error}`);
+    }
 });
 
 module.exports = router;

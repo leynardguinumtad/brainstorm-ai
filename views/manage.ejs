@@ -17,7 +17,7 @@
                         <!-- Brainstorm1 -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             <!-- Display only 8 items, conditionally render if there are more than 8 -->
-                            <% history_brainstorm1s.forEach(lab_project=> { %>
+                            <% history_brainstorm1.forEach(lab_project=> { %>
                                 <div class="bg-white p-4 rounded-lg shadow-md flex flex-col h-full relative">
                                     <!-- Background section for title -->
                                     <div
@@ -83,11 +83,12 @@
                                 <% }) %>
                         </div>
 
-
+                        <hr>
+                        
                         <!-- Brainstorm2 -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             <!-- Display only 8 items, conditionally render if there are more than 8 -->
-                            <% history.forEach(lab_project=> { %>
+                            <% history_brainstorm2.forEach(lab_project=> { %>
                                 <div class="bg-white p-4 rounded-lg shadow-md flex flex-col h-full relative">
                                     <!-- Background section for title -->
                                     <div
@@ -95,8 +96,7 @@
                                         <!-- Title -->
                                         <p class="text-sm font-semibold text-white mb-0 hover:text-bg-white-600">
                                             <em>
-                                                <a
-                                                    href="/brainstorm1/lab/<%= lab_project.id %>?pageids=<%= lab_project.pageids %>">
+                                                <a href="/brainstorm2/lab/<%= lab_project.id %>">
                                                     <%= lab_project.lab_name %>
                                                 </a>
                                             </em>
@@ -136,7 +136,7 @@
                                         <!-- Limit text content -->
                                         <p
                                             class="text-gray-700 text-sm mb-4 overflow-hidden text-ellipsis line-clamp-3">
-                                            <%= lab_project.transformedText %>
+                                            <%= lab_project.ai_text %>
                                         </p>
                                         <p class="text-xs text-gray-500">Date Created: <%= lab_project.created_at %>
                                         </p>
@@ -152,6 +152,7 @@
                                 </div>
                                 <% }) %>
                         </div>
+
 
                         <!-- Brainstorm3 -->
 

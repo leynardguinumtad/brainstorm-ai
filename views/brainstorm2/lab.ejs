@@ -360,7 +360,8 @@
         {
             //inside of the ai-text container
             const ai_text = document.getElementById("ai_text").innerHTML;
-            axios.post("/brainstorm2/save_nodes_ideas_links_ai_text", { lab_id: lab_id, nodes: nodes, links: links, ideas: ideas, ai_text: ai_text }).then((result) =>
+            const brainstormFocus = document.getElementById("brainstormFocus").value;
+            axios.post("/brainstorm2/save_nodes_ideas_links_ai_text", { lab_id: lab_id, nodes: nodes, links: links, ideas: ideas, brainstormFocus: brainstormFocus, ai_text: ai_text }).then((result) =>
             {
                 console.log(result);
             }).catch((err) =>
