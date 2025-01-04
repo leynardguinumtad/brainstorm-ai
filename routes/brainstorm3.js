@@ -301,4 +301,42 @@ router.get("/images/:filename", (req, res) =>
     });
 });
 
+
+router.post("/save-nodes-links-brainstormFocus-ai-text", (req, res) =>
+{
+    const { nodes, links, brainstormFocus, ai_text, lab_id } = req.body;
+
+    const sql = "UPDATE brainstorm3s SET nodes = ?, links = ?, brainstormFocus = ?, ai_text = ? WHERE id = ?";
+    con.query(sql, [JSON.stringify(nodes), JSON.stringify(links), brainstormFocus, ai_text, lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            res.status(500).send(err);
+        }
+        else
+        {
+            res.status(200).send("updated successfully");
+        }
+    });
+});
+
+
+router.get("/load-history/:lab_id", (req, res) =>
+{
+    const lab_id = req.params.lab_id;
+
+    const sql = "SELECT * FROM brainstorm3s WHERE id = ?";
+    con.query(sql, [lab_id], (err, result) =>
+    {
+        if (err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            // res.json(result[0]);
+            res.send(result[0]);
+        }
+    })
+});
 module.exports = router;

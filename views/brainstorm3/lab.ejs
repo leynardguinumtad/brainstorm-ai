@@ -64,11 +64,11 @@
                         <h2 class="text-lg font-semibold mb-2">Upload Image</h2>
                         <form id="uploadForm" class="flex flex-wrap items-center gap-3">
                             <!-- File Input -->
-                            <input type="file" name="image" id="image"
+                            <input type="file" name="image" id="image" required
                                 class="block w-1/3 min-w-[200px] text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600">
 
                             <!-- Text Input -->
-                            <input list="options" id="brainstormFocus"
+                            <input list="options" id="brainstormFocus" required
                                 placeholder="Describe what you want to brainstorm"
                                 class="border border-gray-300 rounded-md px-3 py-2 text-sm w-1/3 min-w-[200px]">
                             <datalist id="options">
@@ -278,6 +278,24 @@
                     });
                 }
 
+
+                function save_nodes_links_brainstormFocus_ai_text()
+                {
+                    const brainstormFocus = document.getElementById("brainstormFocus").value;
+                    const ai_text = document.getElementById("ai-text-content").innerText;
+                    //nodes and links and lab_id are globally accessible
+                    const data = { nodes, links, brainstormFocus, ai_text, lab_id };
+
+                    axios.post("/brainstorm3/save-nodes-links-brainstormFocus-ai-text", data).then((result) =>
+                    {
+
+                        console.log(result);
+                    }).catch((err) =>
+                    {
+                        console.error(err);
+                    });
+                }
+
                 function extract_ideas()
                 {
                     let ideas = [];
@@ -333,6 +351,50 @@
 
                 }
 
+                document.addEventListener("DOMContentLoaded", () =>
+                {
+
+                    console.log("lab id", lab_id);
+                    axios.get(`/brainstorm3/load-history/${lab_id}`).then((result) =>
+                    {
+                        console.log(result);
+
+                        if (result.data.nodes != null)
+                        {
+                            nodes = result.data.nodes;
+                            links = result.data.links;
+                            load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+                        }
+
+                        if (result.data.ai_text != null)
+                        {
+                            document.getElementById("ai-text-content").innerHTML = result.data.ai_text;
+                        }
+
+                        if (result.data.brainstormFocus != null)
+                        {
+                            document.getElementById("brainstormFocus").value = result.data.brainstormFocus;
+                        }
+
+                        if (result.data.image != null)
+                        {
+                            const upload_image_content = document.getElementById("uploaded-image-content");
+                            upload_image_content.src = "/brainstorm3/images/" + result.data.image;
+                        }
+
+
+
+
+
+                        load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+
+                    }).catch((err) =>
+                    {
+
+                    });
+                });
+
+
                 // Example usage of the reusable function
                 var nodes = [
                     { id: 1, label: "Node 1", info: "This is Node 1's info." },
@@ -348,6 +410,8 @@
 
                 ];
 
+
+
                 var ideas = [];
                 const width = window.innerWidth * 0.6;
                 const height = window.innerHeight * 0.8;
@@ -358,7 +422,6 @@
                     e.preventDefault();
 
                     const brainstormFocus = document.getElementById("brainstormFocus");
-
                     const imageInput = document.getElementById("image");
                     const image = imageInput.files[0];
 
@@ -380,6 +443,7 @@
                         load_image();
                         ideas = extract_ideas();
                         llm();
+                        save_nodes_links_brainstormFocus_ai_text();
 
                     }).catch((err) =>
                     {
