@@ -108,6 +108,14 @@
                 <!-- Tooltip -->
                 <div class="tooltip"></div>
             </main>
+            <div id="loading"
+                class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+                <div
+                    class="w-16 h-16 border-4 border-t-blue-500 border-gray-200 border-solid rounded-full animate-spin">
+                </div>
+            </div>
+
+
     </body>
 
     <script>
@@ -311,6 +319,8 @@
         const width = window.innerWidth * 0.6;
         const height = window.innerHeight * 0.8;
 
+
+
         document.getElementById("addIdea").addEventListener("click", function ()
         {
             const idea = document.getElementById("idea").value;
@@ -320,29 +330,41 @@
 
             console.log(ideas);
 
+            // Show the loading indicator
+            document.getElementById("loading").classList.remove("hidden");
+
             if (ideas.length >= 2)
             {
-                axios.post("/brainstorm2/generate-fdg-data", { ideas: ideas, brainstormFocus: brainstormFocus }).then((result) =>
-                {
+                axios.post("/brainstorm2/generate-fdg-data", { ideas: ideas, brainstormFocus: brainstormFocus })
+                    .then((result) =>
+                    {
+                        nodes = result.data.nodes;
+                        links = result.data.links;
 
-                    nodes = result.data.nodes;
-                    links = result.data.links;
+                        load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
 
-                    load_force_directed_graph({ nodes, links, svgSelector: "svg", width, height });
+                        llm();
 
-                    llm();
+                        // Hide the loading indicator after the request completes
+                        document.getElementById("loading").classList.add("hidden");
+                    })
+                    .catch((err) =>
+                    {
+                        // Handle error (optional)
+                        console.error("Error:", err);
 
-
-                }).catch((err) =>
-                {
-
-                });
-            }
-            else
+                        // Hide the loading indicator if there's an error
+                        document.getElementById("loading").classList.add("hidden");
+                    });
+            } else
             {
-
+                // If ideas are less than 2, no request is made, hide the loading indicator
+                document.getElementById("loading").classList.add("hidden");
             }
         });
+
+
+
 
         function save_nodes_ideas_links_brainstormFocus_ai_text()
         {
