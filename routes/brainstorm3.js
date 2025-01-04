@@ -370,7 +370,7 @@ router.get('/download-pdf/:lab_id', (req, res) =>
     const lab_id = req.params.lab_id;
 
     // Query the database for the lab project data
-    const sql = "SELECT * FROM brainstorm2s WHERE id = ?";
+    const sql = "SELECT * FROM brainstorm3s WHERE id = ?";
     con.query(sql, [lab_id], (err, result) =>
     {
         if (err)
@@ -383,7 +383,11 @@ router.get('/download-pdf/:lab_id', (req, res) =>
                 created_at: result[0].created_at,
                 ai_text: result[0].ai_text,
                 image: result[0].image,
+
             };
+
+
+            console.log("project: ", project);
 
             // Create a new PDF document
             const doc = new PDFDocument();
@@ -399,7 +403,8 @@ router.get('/download-pdf/:lab_id', (req, res) =>
             doc.rect(0, 0, 612, 200).fill('#1E40AF'); // Filling the page with a blue color
 
             // Add the logo image
-            const logoPath = path.join(__dirname, '..', 'public', 'img', 'logo-bsai-final.png'); // Assuming logo is stored in the 'public' directory
+            const logoPath = path.join(__dirname, '..', 'public', 'img', 'logo-bsai-final.png');
+            console.log("logoPath: ", logoPath);
             doc.image(logoPath, { width: 75, align: 'center' }); // Add logo with a fixed width of 100px
             doc.moveDown(2); // Move down a bit after the logo
 
@@ -417,10 +422,11 @@ router.get('/download-pdf/:lab_id', (req, res) =>
             doc.fontSize(10).fillColor('black').text(project.ai_text);
             doc.moveDown(2); // Adding space before the next section
 
-            // Add the logo image
-            const image_path = path.join(__dirname, '..', 'uploads', project.image); // Assuming logo is stored in the 'public' directory
-            doc.image(image_path, { width: 75, align: 'center' }); // Add logo with a fixed width of 100px
-            doc.moveDown(2); // Mov
+
+            // const image_path = path.join(__dirname, '..', 'uploads', project.image);
+            // console.log("image_path: ", image_path);
+            // doc.image(image_path, { width: 75, align: 'center' });
+            // doc.moveDown(2);
 
             // Add extracted texts from text_array as a list
             // doc.fontSize(12).fillColor('black').text('Extracted Texts:', { underline: true });
