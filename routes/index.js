@@ -35,6 +35,7 @@ router.get("/home", async (req, res) =>
     const yyyy = today.getFullYear();
     const mm = String(today.getMonth() + 1).padStart(2, "0");
     const dd = String(today.getDate()).padStart(2, "0");
+    const user_id = req.session.user_id;
 
     var featuredArticles;
     try
@@ -53,7 +54,6 @@ router.get("/home", async (req, res) =>
                 image: article.thumbnail ? article.thumbnail.source : null,
                 pageId: article.pageid,
             }));
-            console.log(featuredArticles);
         }
         catch (error)
         {
@@ -84,26 +84,26 @@ router.get("/home", async (req, res) =>
             fetchArticlesByCategory("Business"),
         ]);
 
-        const sql = "SELECT * FROM brainstorm1s WHERE user_id = ?";
-        con.query(sql, [req.session.user_id], (err, results) =>
-        {
-            if (err)
-            {
-                res.send(err);
-            } else
-            {
-                res.render("home", {
-                    most_read_articles: featuredArticles,
-                    education: medicineArticles,
-                    business: businessArticles,
-                    history: results,
-                    name: req.session.name,
-                });
-            }
 
+        //Output: [rows, fields]. use array destructuring to get the rows
+        const [history_brainstorm1] = await con.promise().query("SELECT *, 'brainstorm1' AS type FROM brainstorm1s WHERE user_id = ?", [user_id]);
+        const [history_brainstorm2] = await con.promise().query("SELECT *, 'brainstorm2' AS type  FROM brainstorm2s WHERE user_id = ?", [user_id]);
+        const [history_brainstorm3] = await con.promise().query("SELECT *, 'brainstorm3' AS type  FROM brainstorm3s WHERE user_id = ?", [user_id]);
+
+        const data = {
+            history_brainstorm1: history_brainstorm1,
+            history_brainstorm2: history_brainstorm2,
+            history_brainstorm3: history_brainstorm3,
+            name: req.session.name,
+        };
+
+        res.render("home", {
+            most_read_articles: featuredArticles,
+            education: medicineArticles,
+            business: businessArticles,
+            history: data,
+            name: req.session.name,
         });
-
-
     } catch (error)
     {
         console.log(error);
