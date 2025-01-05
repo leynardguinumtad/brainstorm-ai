@@ -9,25 +9,53 @@
         </a>
     </div>
 
-    <!-- User Icon Placeholder -->
+
+
     <div class="relative flex space-x-4 items-center">
+
+        <!-- User Name Display -->
         <div id="home"
             class="w-auto h-8 border rounded-full flex items-center justify-center cursor-pointer text-white whitespace-nowrap px-3">
             <%= name %>
         </div>
-        <div id="home" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
+
+        <!-- Home Icon -->
+        <div id="home"
+            class="relative group w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
             <i class="fa-solid fa-house" onclick="window.location.href='http://localhost:3000/home'"></i>
+            <span
+                class="absolute top-full mt-2 hidden group-hover:block w-48 bg-gray-400 text-white text-xs p-2 rounded-md shadow-md z-10 text-center">
+                Go back to homepage/dashboard
+            </span>
         </div>
-        <div id="manage-lab" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
+
+        <!-- Manage Icon -->
+        <div id="manage-lab"
+            class="relative group w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
             <i class="fa-solid fa-list-ul" onclick="window.location.href='http://localhost:3000/manage'"></i>
+            <span
+                class="absolute top-full mt-2 hidden group-hover:block w-48 bg-gray-400 text-white text-xs p-2 rounded-md shadow-md z-10 text-center">
+                Delete or view all the labs
+            </span>
         </div>
-        <div id="user-icon" class="w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
+
+        <!-- User Icon -->
+        <div id="user-icon"
+            class="relative group w-8 h-8 border rounded-full flex items-center justify-center cursor-pointer">
             <i class="fa-solid fa-user"></i>
+            <span
+                class="absolute top-full mt-2 hidden group-hover:block w-48 bg-gray-400 text-white text-xs p-2 rounded-md shadow-md z-10 text-center">
+                Logout
+            </span>
         </div>
+
+        <!-- Logout Menu (Dropdown) -->
         <div id="logout-menu" class="hidden absolute mt-10 right-0 w-32 bg-white text-black rounded-lg shadow-lg">
             <a href="http://localhost:3000/logout" class="block px-4 py-2 hover:bg-gray-200 rounded-t-lg">Logout</a>
         </div>
+
     </div>
+
 
 
 </header>

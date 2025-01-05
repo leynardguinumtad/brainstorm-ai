@@ -78,15 +78,33 @@ router.post("/register", (req, res) =>
         } else
         {
             console.log(`id: ${result.insertId}`);
-            //save the id in the session
-            req.session["user_id"] = result.insertId;
-            req.flash("success", "Account created successfully");
-            res.redirect("/home");
+
+            const sql2 = "SELECT * FROM users WHERE id = ?";
+            con.query(sql2, [result.insertId], (err2, result2) =>
+            {
+                if (err2)
+                {
+                    req.flash("error", err);
+                    res.redirect("/auth/register");
+                }
+                else
+                {
+                    //get the name
+                    req.session.name = result2[0].name;
+                    //save the id in the session
+                    req.session["user_id"] = result.insertId;
+                    req.flash("success", "Account created successfully");
+                    res.redirect("/home");
+                }
+            });
+
+
         }
     });
 
 
 });
+
 
 
 module.exports = router;
